@@ -211,7 +211,7 @@
             var itemnumber = $('#itemnumber_' + rowid).val();
 
             if (barcode != '') {
-                barcode_str += '<div class="my_show">';
+                barcode_str += '<div class="my_show" style="page-break-after: always;">';
                 barcode_str += '<table>';
                 barcode_str += '<tr>';
                 barcode_str += '<td colspan="2"><img id="barcode-image" src="<?php echo site_url('barcode/buildcode/BCGcode128/') ?>/'+barcode+'"/></td>';

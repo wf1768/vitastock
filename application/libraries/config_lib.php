@@ -129,7 +129,7 @@ class Config_lib {
                         $num[$menu['funpath']] = $n;
                     }
                     //期货订单待审核数量
-                    if ($menu['funpath'] == 'apply?stype=financial') {
+                    if ($menu['funpath'] == 'apply_check') {
                         $n = $this->_CI->apply_model->getAllByWhere(array('status'=>1));
                         $n = count($n);
                         $num[$menu['funpath']] = $n;

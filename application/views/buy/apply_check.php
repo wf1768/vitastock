@@ -1,7 +1,8 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 
-<?php $this->load->view("common/header"); ?>
-<?php $this->load->view("common/topmenu"); ?>
+<?php $this->load->view("common/header");?>
+<?php $this->load->view("common/topmenu");?>
+
 <style>
     <!--
     .modal {
@@ -29,16 +30,12 @@
 
 <script>
 
-    $(function () {
-
-    })
-
     function save_finance() {
         var form_data = $('#add_finance_form').serialize();
 
         $.ajax({
             type:"post",
-            data: form_data,
+            data: form_data + '&type=apply',
             url:"<?php echo site_url('finance_check/add_finance_check')?>",
             success: function(data){
                 if (data) {
@@ -58,6 +55,36 @@
     function open_finance() {
         $('#add-finance-dialog').modal('show');
     }
+
+    function docheck(applyid) {
+        var msg = '确定通过审核?';
+        bootbox.confirm(msg, function (result) {
+            if (result) {
+                if(result){
+                    $.ajax({
+                        type:"post",
+                        data: 'applyid='+applyid+'&key=2',
+                        url:"<?php echo site_url('apply/add_apply_deal')?>",
+                        success: function(data){
+                            if (data) {
+                                window.location.reload();
+                            }
+                            else {
+                                openalert('处理订单出错，请重新尝试或与管理员联系。');
+                            }
+                        },
+                        error: function() {
+                            openalert('执行操作出错，请重新尝试或与管理员联系。');
+                        }
+                    });
+                }
+            }
+        });
+        return false;
+    }
+
+    $(function() {
+    })
 </script>
 
 <!-- Modal -->
@@ -68,8 +95,8 @@
     </div>
     <div class="modal-body">
         <form id="add_finance_form" method="post" action="">
-            <input type="hidden" id="sellid" name="sellid" value="<?php echo $sell->id ?>">
-            <input type="hidden" id="sellnumber" name="sellnumber" value="<?php echo $sell->sellnumber ?>">
+            <input type="hidden" id="sellid" name="sellid" value="<?php echo $apply->id ?>">
+            <input type="hidden" id="sellnumber" name="sellnumber" value="<?php echo $apply->applynumber ?>">
             <table class="table table-striped table-bordered">
                 <tbody>
                 <tr>
@@ -110,19 +137,18 @@
     </div>
 </div>
 
+
 <div id="content">
     <div class="container">
         <div class="row">
             <div class="span3">
                 <?php $this->load->view('common/leftmenu'); ?>
-            </div>
-            <!-- /span3 -->
+            </div> <!-- /span3 -->
             <div class="span9">
                 <h1 class="page-title">
                     <i class="icon-th-list"></i>
-                    <a href="<?php echo site_url('saleorder/orderList') ?>" class="path-menu-a"> 销售单管理</a> >销售单详情
+                    <a href="javascript:;" class="path-menu-a"> 财务管理</a> > 期货订单审核
                 </h1>
-
                 <div class="row">
                     <div class="span9">
 
@@ -137,93 +163,104 @@
                                     <div class="span8">
                                         <label class="pull-right">
                                             <ul class="nav nav-pills">
-                                                <?php if ($sell->financestatus == 0) : ?>
-                                                <a href="javascript:;" onclick="open_finance()" class="btn btn-primary">审核意见</a>
+                                                <?php if ($apply->financestatus == 0) : ?>
+                                                    <a href="javascript:;" onclick="open_finance()" class="btn btn-primary">审核意见</a>
                                                 <?php endif ?>
-                                                <?php if ($sell->status == 0) : ?>
-                                                <a href="javascript:;" onclick="return docheck(this)" class="btn btn-primary">通过审核</a>
+                                                <?php if ($apply->status == 1) : ?>
+                                                    <a href="javascript:;" onclick="docheck('<?php echo $apply->id ?>')" class="btn btn-primary">通过审核</a>
                                                 <?php endif ?>
-                                                <a href="<?php echo site_url('saleorder/cwcheck?type=').$type ?>" class="btn btn-primary">返回</a>
+                                                <a href="<?php echo site_url('apply_check/pages?type='.$type) ?>" class="btn btn-primary">返回</a>
                                             </ul>
                                         </label>
                                     </div>
                                 </div>
                                 <div class="tabbable">
-
-                                    销售单信息：
+                                    期货订单单信息：
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="1">
                                             <table class="table table-bordered" width="100%">
                                                 <tr>
-                                                    <td>销售单编号</td>
+                                                    <td>订单编号</td>
                                                     <td colspan="3">
-                                                        <?php echo $sell->sellnumber;?>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>状态</td>
-                                                    <td>
-                                                        <?php
-                                                            if ($sell->status == 0) {
-                                                                echo '<font color="red">待审核';
-                                                            }
-                                                            else {
-                                                                echo '<font color="green">已审核';
-                                                            }
-                                                        ;?>
-                                                    </td>
-                                                    <td>销售日期</td>
-                                                    <td>
-                                                        <?php echo $sell->selldate;?>
+                                                        <?php echo $apply->applynumber;?>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>销售店</td>
-                                                    <td><?php echo $sell->storehousecode;?> </td>
-                                                    <td>客户名称</td>
-                                                    <td><?php echo $sell->clientname;?> </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>客户电话</td>
-                                                    <td><?php echo $sell->clientphone;?></td>
-                                                    <td>客户地址</td>
-                                                    <td><?php echo $sell->clientadd;?></td>
+                                                    <td><?php echo $apply->storehousecode;?> </td>
+                                                    <td>销售日期</td>
+                                                    <td>
+                                                        <?php echo $apply->applydate;?>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>总价(RMB)</td>
-                                                    <td><?php echo $sell->totalmoney;?>  </td>
+                                                    <td><?php echo $apply->totalmoney;?>  </td>
                                                     <td>折扣价(RMB)</td>
-                                                    <td><?php echo $sell->discount;?></td>
+                                                    <td><?php echo $apply->discount;?></td>
                                                 </tr>
                                                 <tr>
                                                     <td>已付金额(RMB)</td>
-                                                    <td><?php echo $sell->paymoney;?>  </td>
+                                                    <td><?php echo $apply->paymoney;?>  </td>
                                                     <td>未付金额(RMB)</td>
-                                                    <td><?php echo $sell->lastmoney;?></td>
+                                                    <td><?php echo $apply->lastmoney;?></td>
                                                 </tr>
                                                 <tr>
                                                     <td>折扣率</td>
                                                     <td><?php
-                                                        if ($sell->discount >0 && $sell->totalmoney >0) {
-                                                            echo ((round($sell->discount/$sell->totalmoney, 2))*100).'%';
+                                                        if ($apply->discount >0 && $apply->totalmoney >0) {
+                                                            echo ((round($apply->discount/$apply->totalmoney, 2))*100).'%';
                                                         }
                                                         else {
                                                             echo '0%';
                                                         }
-                                                        ?>  </td>
-                                                    <td>销售者</td>
-                                                    <td><?php echo $sell->checkby;?></td>
+                                                        ?>
+                                                    </td>
+                                                    <td>承诺到货日期</td>
+                                                    <td><?php echo $apply->commitgetdate;?> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>客户名称</td>
+                                                    <td><?php echo $apply->clientname;?> </td>
+                                                    <td>客户电话</td>
+                                                    <td><?php echo $apply->clientphone;?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>客户地址</td>
+                                                    <td colspan="3">
+                                                        <?php echo $apply->clientadd;?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>申请人</td>
+                                                    <td><?php echo $apply->applyby;?></td>
+                                                    <td>申请日期</td>
+                                                    <td><?php echo $apply->applydate;?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>电子邮件</td>
+                                                    <td><?php echo $apply->email;?></td>
+                                                    <td>状态</td>
+                                                    <td>
+                                                        <?php
+                                                        if ($apply->status == 1) {
+                                                            echo '<font color="red">待审核';
+                                                        }
+                                                        else {
+                                                            echo '<font color="green">已审核';
+                                                        }
+                                                        ;?>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>备注</td>
-                                                    <td colspan="3"><?php echo $sell->remark;?> </td>
+                                                    <td colspan="3"><?php echo $apply->remark;?> </td>
                                                 </tr>
                                             </table>
 
                                             <table class="table table-striped table-bordered">
                                                 <thead>
                                                 <tr>
-
                                                     <th>名称</th>
                                                     <th>代码</th>
                                                     <th>描述</th>
@@ -248,7 +285,6 @@
                                                         <td><?php echo $row->color ?></td>
                                                         <td><?php echo $row->statusvalue ?></td>
                                                         <td><?php echo $row->salesprice?></td>
-<!--                                                        <td>--><?php //echo $salprice[$row->id]?><!--</td>-->
                                                     </tr>
                                                 <?php endforeach;?>
                                                 </tbody>
@@ -263,7 +299,6 @@
                     </div>
                     <!-- /span9 -->
                 </div>
-                <!-- /row -->
                 <div class="widget widget-table">
                     <div class="widget-header">
                         <i class="icon-th-list"></i>
@@ -278,7 +313,6 @@
                                 <th> 余款</th>
                                 <th> 审核人</th>
                                 <th> 审核意见</th>
-<!--                                <th> 操作</th>-->
                             </tr>
                             </thead>
                             <tbody>
@@ -289,58 +323,16 @@
                                     <td><?php echo $row->lastmoney ?></td>
                                     <td><?php echo $row->financeman ?></td>
                                     <td><?php echo $row->remark ?></td>
-<!--                                    <td>-->
-<!--                                        --><?php //if ($this->account_info_lib->id == $row->createbyid) :?>
-<!--                                            <a href="" _var="--><?php //echo $row->id?><!--" name='returnbill' class="btn btn-primary">退单</a>-->
-<!--                                        --><?php //endif;?>
-<!--                                    </td>-->
                                 </tr>
                             <?php endforeach;?>
                             </tbody>
                         </table>
                     </div> <!-- /widget-content -->
                 </div> <!-- /widget -->
-            </div>
-            <!-- /span9 -->
-        </div>
-        <!-- /row -->
-    </div>
-    <!-- /container -->
+            </div> <!-- /span9 -->
+        </div> <!-- /row -->
+    </div> <!-- /container -->
 </div> <!-- /content -->
 
 
-
 <?php $this->load->view("common/footer"); ?>
-
-
-<!--------------------------------- -->
-
-<script>
-
-    function docheck(ob) {
-        var msg = '确定通过审核?';
-        bootbox.confirm(msg, function (result) {
-            if (result) {
-                $.ajax({
-                    type:"get",
-                    data: 'id=<?php echo $_GET["id"] ?>&type=<?php echo $type ?>',
-                    url:"<?php echo site_url('saleorder/doCwCheck')?>",
-                    success: function(data){
-                        if (data) {
-                            window.location.reload();
-                        }
-                        else {
-                            openalert('审核出错，请重新尝试或与管理员联系。');
-                        }
-                    },
-                    error: function() {
-                        openalert('执行操作出错，请重新尝试或与管理员联系。');
-                    }
-                });
-<!--                location.href = "--><?php //echo site_url("saleorder/doCwCheck?id=".$_GET['id'].'&type='.$type)?><!--";-->
-            }
-        });
-        return false;
-    }
-</script>
-<!-- ----------------------------------- -->

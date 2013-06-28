@@ -33,9 +33,9 @@
                     }
                 }
                 //财务的期货订单管理 待审核数量显示
-                if ($menu['funpath'] == 'apply?stype=financial') {
-                    if ($num['apply?stype=financial'] > 0) {
-                        $active = '<span class="label label-warning pull-right">'.$num['apply?stype=financial'].'</span>';
+                if ($menu['funpath'] == 'apply_check') {
+                    if ($num['apply_check'] > 0) {
+                        $active = '<span class="label label-warning pull-right">'.$num['apply_check'].'</span>';
                     }
                 }
                 //采购管理中期货订货  已审核数量显示

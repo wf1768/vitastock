@@ -127,7 +127,7 @@ class apply extends Stock__Controller {
 	}
 
 	/**
-	 * 按采购单状态，显示采购单列表
+	 * 按状态，显示单列表
 	 */
 	public function pages() {
 

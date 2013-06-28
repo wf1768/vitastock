@@ -17,7 +17,7 @@
 /**
  * finance_check Controller Class
  *
- * 财务审核意见 控制器
+ * 财务现货销售单审核意见 控制器
  *
  * @package		stock
  * @subpackage	Controller
@@ -42,12 +42,7 @@ class finance_check extends Stock__Controller {
 		/** 在继承的自定义父类，获取系统配置。 */
         $this->load->model('finance_check_model');
         $this->load->model('sell_model');
-//		$this->_data = $this->get_stock_config('0', '0', true);
-//		$this->load->model('storehouse_model', "storehouse");
-//		$this->load->model('stock_model');
-//		$this->_data['page_title'] = "首页";
-//		$this->_data['fun_path'] = "main";
-
+        $this->load->model('apply_model');
 	}
 
 	public function index() {
@@ -55,13 +50,14 @@ class finance_check extends Stock__Controller {
 	}
 
     public function add_finance_check() {
+        $type=$this->input->post('type') ? $this->input->post('type') : '';
         $result = false;
 
         //插入审批意见表
         $insert_finance_check = array(
             'sellid'               =>  $this->input->post('sellid') ? $this->input->post('sellid') : '',
             'sellnumber'              =>  $this->input->post('sellnumber') ? $this->input->post('sellnumber') : '',
-            'financetime'              =>  $this->input->post('financetime') ? $this->input->post('financetime') : '',
+            'financetime'              =>  date('Y-m-d H:i:s',now()),//$this->input->post('financetime') ? $this->input->post('financetime') : '',
             'paymoney'                =>  $this->input->post('paymoney') ? $this->input->post('paymoney') : '',
             'lastmoney'                =>  $this->input->post('lastmoney') ? $this->input->post('lastmoney') : '',
             'remark'                =>  $this->input->post('remark') ? $this->input->post('remark') : '',
@@ -73,11 +69,21 @@ class finance_check extends Stock__Controller {
 
         //如果余额为0.就修改销售单的financestatus值为1
         if ($insert_finance_check['lastmoney'] == 0) {
-            $update_sell = array(
-                'id'                    =>  $this->input->post('sellid') ? $this->input->post('sellid') : '',
-                'financestatus'         =>  1,
-            );
-            $num = $this->dataUpdate($this->sell_model,$update_sell,false);
+            if ($type == 'apply') {
+                $update_apply = array(
+                    'id'                    =>  $this->input->post('sellid') ? $this->input->post('sellid') : '',
+                    'financestatus'         =>  1,
+                );
+                $num = $this->dataUpdate($this->apply_model,$update_apply,false);
+            }
+            else {
+                $update_sell = array(
+                    'id'                    =>  $this->input->post('sellid') ? $this->input->post('sellid') : '',
+                    'financestatus'         =>  1,
+                );
+                $num = $this->dataUpdate($this->sell_model,$update_sell,false);
+            }
+
         }
 
         if ($tmpid) {
