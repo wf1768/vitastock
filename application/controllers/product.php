@@ -109,9 +109,10 @@ class product extends  Stock__Controller{
      * @return mixed
      */
     public  function  creatOrder(){
-    	date_default_timezone_set('PRC');
+        //修改销售单号生成方式。屏蔽原销售单号生成。
+//    	date_default_timezone_set('PRC');
     	$this->_data['storehose']=$this->storehouse_model->getAllByWhere();
-		$this->_data['sellnumber']= date("Ymd-His") . '-' . rand(100,999);
+//		$this->_data['sellnumber']= date("Ymd-His") . '-' . rand(100,999);
 		$data['list']=$this->cart_model->getProduct($this->account_info_lib->id);
 		$list= array_merge($this->_data,$data);
 		$this->load->view("product/creatOrder",$list);

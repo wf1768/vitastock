@@ -45,9 +45,9 @@ class apply_Model extends MY_Model {
      * 重写父类表单验证
      */
     public function _validate() {
-        $this->form_validation->set_rules('applynumber', '订单编号', 'required|trim|htmlspecialchars');
+//        $this->form_validation->set_rules('applynumber', '订单编号', 'required|trim|htmlspecialchars');
         $this->form_validation->set_rules('clientname', '客户名称', 'required|trim|htmlspecialchars');
-        $this->form_validation->set_rules('applyby', '申请人', 'required|trim|htmlspecialchars');
+//        $this->form_validation->set_rules('applyby', '申请人', 'required|trim|htmlspecialchars');
 
 
     }

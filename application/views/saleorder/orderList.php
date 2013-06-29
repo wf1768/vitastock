@@ -168,7 +168,7 @@ $(document).ready(function(){
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
    <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" name="closeit" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">取消订单</h3>
+        <h3 id="myModalLabel">退换货</h3>
   </div>
    <div class="modal-body">
         <form id="doreturns" class="form-horizontal" method="post" action="<?php echo site_url('saleorder/billReturn')?>">

@@ -49,8 +49,10 @@ class saleorder extends Stock__Controller {
 	 * @access public
 	 */
 	public function addOrder() {
-		date_default_timezone_set('PRC');
-		$this->_data['sellnumber'] = date("Ymd-His") . '-' . rand(100, 999);
+        //销售单号改为1000001开始的流水。这里屏蔽原生成销售单号代码
+//		date_default_timezone_set('PRC');
+//		$this->_data['sellnumber'] = date("Ymd-His") . '-' . rand(100, 999);
+
 		$this->_data['color'] = $this->color_model->getAllByWhere();
 		$this->_data['factory'] = $this->factory_model->getAllByWhere();
 		$this->_data['brand'] = $this->brand_model->getAllByWhere();
@@ -283,8 +285,14 @@ class saleorder extends Stock__Controller {
 		$upddatab['id'] = $this->input->post('bid');
 		$upddatab['status'] = 1; //退单了
 		$updres = $this->dataUpdate($this->sell_model, $upddatab, false);
+
+        //获取销售单号
+        $sell = $this->sell_model->getOne(trim($this->input->post('bid')));
+
 		if ($updres) {
-			$data['returnnumber'] = date("Ymd-His") . '-' . rand(100, 999);
+//			$data['returnnumber'] = date("Ymd-His") . '-' . rand(100, 999);
+            //退单号跟销售单号一致。
+            $data['returnnumber'] = $sell[0]->sellnumber;
 			$data['sellid'] = trim($this->input->post('bid'));
 			$data['returntime'] = date("Y-m-d H:i:s");
 			$data['returnmemo'] = trim($this->input->post('returnmemo'));
@@ -422,7 +430,7 @@ class saleorder extends Stock__Controller {
 
         //获取当前销售单的审核意见
         $this->load->model('finance_check_model');
-        $finance_check = $this->finance_check_model->getAllByWhere(array('sellnumber'=>$info['sell']->sellnumber),array(),array('financetime'=>'asc'));
+        $finance_check = $this->finance_check_model->getAllByWhere(array('sellid'=>$info['sell']->id),array(),array('financetime'=>'asc'));
         $this->_data['finance_check'] = $finance_check;
 		//查询关联的产品
 		$prolist = $this->sellcont_model->getAllByWhere(array ("sellid" => $id), array ('stockid','price'));

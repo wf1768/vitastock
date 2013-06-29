@@ -423,8 +423,15 @@
                             <tr>
                                 <td>承诺到货日期</td>
                                 <td><?php echo strtotime($row[0]->commitgetdate)?$row[0]->commitgetdate:''; ?></td>
-                                <td>电子邮件</td>
-                                <td><?php echo $row[0]->email ?></td>
+                                <td>折扣率</td>
+                                <td><?php
+                                    if ($row[0]->discount >0 && $row[0]->totalmoney >0) {
+                                        echo ((round($row[0]->discount/$row[0]->totalmoney, 2))*100).'%';
+                                    }
+                                    else {
+                                        echo '0%';
+                                    }
+                                    ?></td>
                             </tr>
 
                             <tr>

@@ -51,7 +51,7 @@
                                                 <tr>
                                                     <td>销售单编号</td>
                                                     <td >
-                                                          <input type="text"  id="remark" name="sellnumber"  value="<?php echo $sellnumber?>" readonly>
+                                                          <input type="text"  id="remark" name="sellnumber"  value="" placeholder="自动生成" readonly>
                                                     </td>
                                                     <td>销售者</td>
                                                     <td><input type="text" value="<?php echo $this->account_info_lib->accountname ?>" name="checkby"  required></td>

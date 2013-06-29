@@ -169,6 +169,7 @@
     }
 
     $(function () {
+        $('#totalmoney').val('0');
         $('#selldate_div').datepicker().on('changeDate', function(ev) {
             $(this).datepicker('hide')
         });
@@ -301,10 +302,10 @@
                                         <tr>
                                             <td style="vertical-align:middle">订单编号</td>
                                             <td colspan="3"><input type="text" class="span3" id="applynumber"
-                                                       name="applynumber" required style="margin-bottom: 0px;" placeholder="必须填写"
-                                                       value="<?php echo set_value('applynumber'); ?>"> *
-                                                <input type="button" class="btn btn-primary btn-small" value="生成订单编号"
-                                                       onclick="get_buynumber()">
+                                                       name="applynumber" readonly style="margin-bottom: 0px;" placeholder="自动生成"
+                                                       value=""> *
+<!--                                                <input type="button" class="btn btn-primary btn-small" value="生成订单编号"-->
+<!--                                                       onclick="get_buynumber()">-->
                                             </td>
                                         </tr>
                                         <tr>

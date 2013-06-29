@@ -137,8 +137,6 @@
                                                         <th>代码</th>
                                                         <th>描述</th>
                                                         <th>厂家</th>
-                                                        <!--                                                    <th>品牌</th>-->
-                                                        <!--                                                    <th>类别</th>-->
                                                         <th>颜色</th>
                                                         <th>条形码</th>
                                                         <th>售价</th>
@@ -157,12 +155,6 @@
                                                             <td><?php echo $row->code ?></td>
                                                             <td><?php echo $row->memo ?></td>
                                                             <td><?php echo $row->factoryname ?></td>
-                                                            <!--                                                        <td>-->
-                                                            <?php //echo $row->brandname ?>
-                                                            <!--</td>-->
-                                                            <!--                                                        <td>-->
-                                                            <?php //echo $row->typename ?>
-                                                            <!--</td>-->
                                                             <td><?php echo $row->color ?></td>
                                                             <td><?php echo $row->barcode ?></td>
                                                             <td><?php echo $row->salesprice ?></td>
@@ -255,8 +247,10 @@
                 </tr>
                 <tr style="border: 1px #000 solid; text-align: center; height: 40px">
                     <th style="border: 1px #000 solid;">序号</th>
+                    <th style="border: 1px #000 solid;">图片</th>
+                    <th style="border: 1px #000 solid;">商品名称</th>
                     <th style="border: 1px #000 solid;">商品描述</th>
-
+                    <th style="border: 1px #000 solid;">厂家</th>
                     <th style="border: 1px #000 solid;">条形码</th>
                     <th style="border: 1px #000 solid;">数量</th>
                     <th style="border: 1px #000 solid;">库房</th>
@@ -270,8 +264,10 @@
                         <tr class="content_tr"
                             style="height: 30px; border: 1px #000 solid; text-align: center">
                             <td style="border: 1px #000 solid;"><?php echo $j + 1; ?></td>
+                            <td><img class="thumbnail smallImg" src="<?php echo base_url('').$list[$j]->barcode ?>"></td>
                             <td style="border: 1px #000 solid;"><?php echo $list[$j]->title ?></td>
-
+                            <td style="border: 1px #000 solid;"><?php echo $list[$j]->memo ?></td>
+                            <td style="border: 1px #000 solid;"><?php echo $list[$j]->factoryname ?></td>
                             <td style="border: 1px #000 solid;"><?php echo $list[$j]->barcode; ?></td>
                             <td style="border: 1px #000 solid;"><?php echo $list[$j]->number ?></td>
                             <td style="border: 1px #000 solid;"><?php echo peisong::getStorehouse($list[$j]->storehouseid); ?></td>
@@ -280,6 +276,9 @@
                     <?php else : ?>
                         <tr class="content_tr"
                             style="height: 30px; border: 1px #000 solid; text-align: center">
+                            <td style="border: 1px #000 solid;"></td>
+                            <td style="border: 1px #000 solid;"></td>
+                            <td style="border: 1px #000 solid;"></td>
                             <td style="border: 1px #000 solid;"></td>
                             <td style="border: 1px #000 solid;"></td>
                             <td style="border: 1px #000 solid;"></td>

@@ -214,10 +214,7 @@ $(document).ready(function(){
                                                     <?php endforeach;?>
                                                 </tbody>
                                             </table>
-                                            
                                             <?php endif;?>
-                                            
-                                            
                                         </div>
                                     </div>
                                 </div>
@@ -229,6 +226,36 @@ $(document).ready(function(){
                     <!-- /span9 -->
                 </div>
                 <!-- /row -->
+                <div class="widget widget-table">
+                    <div class="widget-header">
+                        <i class="icon-th-list"></i>
+                        <h3> 审核意见列表</h3>
+                    </div> <!-- /widget-header -->
+                    <div class="widget-content">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th> 审核时间</th>
+                                <th> 收款金额</th>
+                                <th> 余款</th>
+                                <th> 审核人</th>
+                                <th> 审核意见</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach($finance_check as $row):?>
+                                <tr>
+                                    <td><?php echo $row->financetime ?></td>
+                                    <td><?php echo $row->paymoney ?></td>
+                                    <td><?php echo $row->lastmoney ?></td>
+                                    <td><?php echo $row->financeman ?></td>
+                                    <td><?php echo $row->remark ?></td>
+                                </tr>
+                            <?php endforeach;?>
+                            </tbody>
+                        </table>
+                    </div> <!-- /widget-content -->
+                </div> <!-- /widget -->
             </div>
             <!-- /span9 -->
         </div>

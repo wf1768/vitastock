@@ -96,6 +96,12 @@ class peisong  extends  Stock__Controller{
 		isset ($product) && $info['list'] = $product;
 		//查询对应的配送单
 		$this->_data['sendlist']=$this->send_model->getAllByWhere(array("sellid"=>$id));
+
+        //获取当前销售单的审核意见
+        $this->load->model('finance_check_model');
+        $finance_check = $this->finance_check_model->getAllByWhere(array('sellid'=>$info['sell']->id),array(),array('financetime'=>'asc'));
+        $this->_data['finance_check'] = $finance_check;
+
 		$datalist = array_merge($this->_data, $info);
 		$this->load->view("peisong/showBillInfo", $datalist);
 	}

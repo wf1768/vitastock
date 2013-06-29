@@ -321,8 +321,15 @@
                                             <?php endforeach; ?>
                                         <?php endif;?>
                                     </select>
-
-                                    <!--                        <button style="margin-left:70px" id="supsearchit"type="button" class="btn">高级搜索</button>-->
+                                    &nbsp;&nbsp;<font class="myfont">商品状态：</font>
+                                    <select name="status" id="status">
+                                        <option value="1000" <?php if ($status == '1000' ): ?>selected="true"<?php endif; ?>>全部</option>
+                                        <option value="0" <?php if ($status == '0') { echo "selected"; }?> >未入库</option>
+                                        <option value="1" <?php if ($status == '1') { echo "selected"; }?> >在库</option>
+                                        <option value="3" <?php if ($status == '3') { echo "selected"; }?> >已销售</option>
+                                        <option value="4" <?php if ($status == '4') { echo "selected"; }?> >已配送</option>
+                                    </select>
+                                    <br />
                                     <button style="margin-left:20px" id="search" type="submit" class="btn btn-primary">&nbsp;&nbsp;搜&nbsp;&nbsp;索&nbsp;&nbsp;</button>
                                 </form>
 

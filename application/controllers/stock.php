@@ -74,6 +74,7 @@ class stock extends Stock__Controller {
         $storehouseid = $_REQUEST['houseid'];
         $p = $this->input->get('p') ? $this->input->get('p') : 1;
         $status = $this->input->get('status') ? $this->input->get('status') : 1;
+        $status = $_REQUEST['status'];
 
         if (isset ($_REQUEST['barcode']) && $_REQUEST['barcode'] != '') {
             $barcode = $_REQUEST['barcode'];
@@ -143,14 +144,6 @@ class stock extends Stock__Controller {
         $factory = $this->_get_factorys();
         $this->_data['factory'] = $factory;
 
-        //获取颜色
-//        $this->load->model('color_model');
-//        $this->_data['color'] = $this->color_model->getAllByWhere();
-
-        //获取品牌
-//        $brand = $this->_get_brands();
-//        $this->_data['brand'] = $brand;
-
         //获取类别
         $type = $this->_get_commodity_types();
         $this->_data['type'] = $type;
@@ -159,17 +152,28 @@ class stock extends Stock__Controller {
         $oper = $this->auth_lib->role_fun_operate('7');
         $this->_data['oper'] = $oper;
 
-
-//        if (empty($storehouseid)) {
-//            $storehouseid = $houses[0]->id;
-//        }
-
-        if ($storehouseid == '0') {
-            $otherwhere = 'statuskey = '.$status;
+        if ($status == 1000) {
+            $status_where = '';
         }
         else {
-            $otherwhere = 'storehouseid = '.$storehouseid.' and statuskey='.$status;
+            $status_where = 'statuskey = '.$status;
         }
+
+        if ($storehouseid == '0') {
+            $otherwhere = $status_where;
+        }
+        else {
+            if (empty($status_where)) {
+                $otherwhere = 'storehouseid = '.$storehouseid;
+            }
+            else {
+                $otherwhere = 'storehouseid = '.$storehouseid.' and '.$status_where;
+            }
+
+        }
+        $this->_data['status'] = $status;
+
+
 
 
         $this->_data['storehouseid'] = $storehouseid;
