@@ -319,7 +319,6 @@
                                             <div class="controls">
                                                 <select class="span2" id="statuskey" name="statuskey">
                                                     <option value="1" <?php echo set_select('statusvalue', '1', TRUE); ?>>在库</option>
-                                                    <option value="2" <?php echo set_select('statusvalue', '2'); ?>>已销售</option>
                                                 </select>
                                             </div>
                                             <!-- /controls -->

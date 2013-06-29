@@ -80,10 +80,24 @@
                                             }?>><?php echo $val->typename;?></option>
                                         <?php endforeach;?>
                                     </select>
-<!--                                    <input type="text" id="" name="typename"-->
-<!--                                           value="--><?php //echo isset($_REQUEST['typename']) ? $_REQUEST['typename'] : ''; ?><!--"-->
-<!--                                           placeholder="请输入商品品牌">-->
-                                    &nbsp;&nbsp;<font class="myfont">商品描述：</font>
+                                    &nbsp;&nbsp;<font class="myfont">商品状态：</font>
+                                    <select name="statuskey">
+                                        <option value="1000" <?php if ($_REQUEST['statuskey'] == '1000') { echo "selected"; }?>>请选择</option>
+                                        <option value="0"
+                                            <?php if ($_REQUEST['statuskey'] == '0') { echo "selected"; }?>
+                                        >未入库</option>
+                                        <option value="1"
+                                            <?php if ($_REQUEST['statuskey'] == '1') { echo "selected"; }?>
+                                        >在库</option>
+                                        <option value="3"
+                                            <?php if ($_REQUEST['statuskey'] == '3') { echo "selected"; }?>
+                                            >已销售</option>
+                                        <option value="4"
+                                            <?php if ($_REQUEST['statuskey'] == '4') { echo "selected"; }?>
+                                            >已配送</option>
+                                    </select>
+                                    <br/>
+                                    <font class="myfont">商品描述：</font>
                                     <input type="text" name="memo"
                                            value="<?php echo isset($_REQUEST['memo']) ? $_REQUEST['memo'] : ''; ?>"
                                            placeholder="请输入商品描述">
@@ -133,7 +147,8 @@
                                         <td>
                                             <a href="<?php echo site_url('stock_find/search_show?id='.$row->id) ?>"><?php echo $row->title ?></a>
                                         </td>
-                                        <td><?php echo $row->code ?></td>
+                                        <td title="<?php echo $row->code ?>"><?php echo Common::subStr($row->code, 0, 10) ?></td>
+<!--                                        <td>--><?php //echo $row->code ?><!--</td>-->
                                         <td title="<?php echo $row->memo ?>"><?php echo Common::subStr($row->memo, 0, 10) ?></td>
                                         <td><?php echo $row->factoryname ?></td>
                                         <td><?php echo $row->brandname ?></td>

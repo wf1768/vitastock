@@ -139,9 +139,25 @@ class stock_find extends Stock__Controller {
 
 //        $order = array ("createtime" => "desc");
         $order = array ();
-        $otherwehre = array ("statuskey =" => '1');
+        if (isset($_REQUEST['statuskey'])) {
+//            $_REQUEST['statuskey'] = 1;
+//            $otherwehre = array ("statuskey =" => $_GET['statuskey']);
+        }
+        else {
+            if (empty($_REQUEST['statuskey'])) {
+                $_REQUEST['statuskey'] = '1000';
+            }
+            else {
+                $_REQUEST['statuskey'] = 1;
+            }
+//            $_REQUEST['statuskey'] = 1;
+//            $otherwehre = array ("statuskey =" => '1');
+        }
+        $otherwehre = array ();
+//        $otherwehre = array ("statuskey =" => '1');
+
         $like = array ('code','title','factorycode','brandcode','color','storehouseid','typename','memo','barcode');
-        $this->dataList("stock/stock_search", $this->stock_model, $where = array (), $like, $order, $this->_data, $otherwehre);
+        $this->dataList("stock/stock_search", $this->stock_model, $where = array ('statuskey'), $like, $order, $this->_data, $otherwehre);
 //        $this->load->view('stock/stock_search',$this->_data);
     }
 

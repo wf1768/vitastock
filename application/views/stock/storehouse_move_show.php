@@ -43,12 +43,13 @@
                                 str += '<td>' + rows[i].code + '</td>';
                                 str += '<td>' + rows[i].memo + '</td>';
                                 str += '<td>' + rows[i].factoryname + '</td>';
-                                str += '<td>' + rows[i].brandname + '</td>';
                                 str += '<td>' + rows[i].typename + '</td>';
                                 str += '<td>' + rows[i].salesprice + '</td>';
                                 str += '<td>' + rows[i].color + '</td>';
                                 str += '<td>' + rows[i].number + '</td>';
                                 str += '<td>' + rows[i].barcode + '</td>';
+                                str += '<td>' + rows[i].storehouse + '</td>';
+                                str += '<td>' + rows[i].statusvalue + '</td>';
                                 str += '</tr>';
                                 num++;
                             }
@@ -139,12 +140,13 @@
                         str += '<td>' + rows[i].code + '</td>';
                         str += '<td>' + rows[i].memo + '</td>';
                         str += '<td>' + rows[i].factoryname + '</td>';
-                        str += '<td>' + rows[i].brandname + '</td>';
                         str += '<td>' + rows[i].typename + '</td>';
                         str += '<td>' + rows[i].salesprice + '</td>';
                         str += '<td>' + rows[i].color + '</td>';
                         str += '<td>' + rows[i].number + '</td>';
                         str += '<td>' + rows[i].barcode + '</td>';
+                        str += '<td>' + rows[i].storehouse + '</td>';
+                        str += '<td>' + rows[i].statusvalue + '</td>';
                         str += '</tr>';
                         num++;
                     }
@@ -422,12 +424,13 @@
                                 <th>代码</th>
                                 <th>描述</th>
                                 <th>厂家</th>
-                                <th>品牌</th>
                                 <th>类别</th>
                                 <th>售价(￥)</th>
                                 <th>颜色</th>
                                 <th>数量</th>
                                 <th>条形码</th>
+                                <th>库房</th>
+                                <th>状态</th>
                             </tr>
                             </thead>
                             <tbody id="move_content">
@@ -441,12 +444,13 @@
                                         <td><?php echo $content->code ?></td>
                                         <td><?php echo $content->memo ?></td>
                                         <td><?php echo $content->factoryname ?></td>
-                                        <td><?php echo $content->brandname ?></td>
                                         <td><?php echo $content->typename ?></td>
                                         <td><?php echo $content->salesprice ?></td>
                                         <td><?php echo $content->color ?></td>
                                         <td><?php echo $content->number ?></td>
                                         <td><?php echo $content->barcode;$num++ ?></td>
+                                        <td><?php echo storehouse_move::getStorehouse($content->storehouseid);?></td>
+                                        <td><?php echo $content->statusvalue;?></td>
                                     </tr>
                                 <?php endforeach;?>
                             <?php endif;?>
@@ -710,11 +714,10 @@
                 <th style="border:1px #000 solid;">名称</th>
                 <th style="border:1px #000 solid;">代码</th>
                 <th style="border:1px #000 solid;">描述</th>
-<!--                <th>厂家</th>-->
-<!--                <th>品牌</th>-->
-<!--                <th>类别</th>-->
                 <th style="border:1px #000 solid;">数量</th>
                 <th style="border:1px #000 solid;">条形码</th>
+                <th style="border:1px #000 solid;">库房</th>
+                <th style="border:1px #000 solid;">状态</th>
             </tr>
             </thead>
             <tbody >
@@ -726,11 +729,10 @@
                         <td style="border:1px #000 solid;"><?php echo $content->title ?></td>
                         <td style="border:1px #000 solid;"><?php echo $content->code ?></td>
                         <td style="border:1px #000 solid;"><?php echo $content->memo ?></td>
-<!--                        <td>--><?php //echo $content->factoryname ?><!--</td>-->
-<!--                        <td>--><?php //echo $content->brandname ?><!--</td>-->
-<!--                        <td>--><?php //echo $content->typename ?><!--</td>-->
                         <td style="border:1px #000 solid;"><?php echo $content->number ?></td>
                         <td style="border:1px #000 solid;"><?php echo $content->barcode;$num++ ?></td>
+                        <td style="border:1px #000 solid;"><?php echo storehouse_move::getStorehouse($content->storehouseid) ?></td>
+                        <td style="border:1px #000 solid;"><?php echo $content->statusvalue ?></td>
                     </tr>
                 <?php endforeach;?>
             <?php endif;?>

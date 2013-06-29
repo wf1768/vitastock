@@ -106,6 +106,14 @@ class storehouse_move extends Stock__Controller {
         $this->dataList('stock/storehouse_move_list',$this->storehouse_move_model,array('oldhouseid','targethouseid'),array('movenumber','moveby','remark'),$order,$this->_data,$otherwhere);
     }
 
+    /*
+     * 获取商品的库房
+     */
+    public function getStorehouse($id){
+        $info=$this->storehouse_model->getOneByWhere(array("id"=>$id));
+        echo  $info->storehousecode;
+    }
+
     /**
      * 添加调拨单
      */
@@ -213,8 +221,8 @@ class storehouse_move extends Stock__Controller {
         $newid = $this->dataInsert($this->storehouse_move_model,$insert_storehouse_move,false);
 
         if ($newid) {
-//            $this->success(null,site_url('storehouse_move/show?id='.$newid));
-            $this->success(null,site_url('storehouse_move'));
+            $this->success(null,site_url('storehouse_move/show?id='.$newid));
+//            $this->success(null,site_url('storehouse_move'));
         }
         else {
             $this->error('保存调拨单出错，请重新尝试或与管理员联系。',site_url('storehouse_move'));
@@ -394,6 +402,11 @@ class storehouse_move extends Stock__Controller {
 
             $stock_move_content = $this->stock_model->getAllByWhere();
 
+            foreach ($stock_move_content as $stock ) {
+                $info=$this->storehouse_model->getOneByWhere(array("id"=>$stock->storehouseid));
+                $stock->storehouse = $info->storehousecode;
+            }
+
             //将数据转为json
             require_once(FCPATH . STOCK_PLUGINS_DIR . '/' . 'JSON.php');
             $json = new Services_JSON();
@@ -437,6 +450,11 @@ class storehouse_move extends Stock__Controller {
         $this->db->where_in('id',$ids);
 
         $stock_move_content = $this->stock_model->getAllByWhere();
+
+        foreach ($stock_move_content as $stock ) {
+            $info=$this->storehouse_model->getOneByWhere(array("id"=>$stock->storehouseid));
+            $stock->storehouse = $info->storehousecode;
+        }
 
         //将数据转为json
         require_once(FCPATH . STOCK_PLUGINS_DIR . '/' . 'JSON.php');
