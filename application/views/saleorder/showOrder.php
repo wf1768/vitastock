@@ -214,6 +214,7 @@
             .content_tr td {
                 height: 10px;
                 overflow: hidden;
+                font-size: 12px;
             }
         </style>
         <table  cellspacing="0" style="border-collapse: collapse; border-spacing: 0;background-color: transparent;max-width: 100%" cellpadding="0" width="100%" class="print_font">
@@ -231,8 +232,8 @@
                     </table>
                     <table border="0" cellspacing="0" cellpadding="0" width="100%" class="print_font">
                         <tr>
-                            <td style="width: 73%"></td>
-                            <td style="text-align: right">合同编号：<?php echo $sell->sellnumber;?></td>
+<!--                            <td style="width: 73%"></td>-->
+                            <td colspan="2" style="text-align: right">合同编号：<span style="font-size: 18px;color: red;"><?php echo $sell->sellnumber;?></span></td>
                         </tr>
                         <tr>
                             <td>一.&nbsp;&nbsp;买方决定购买卖方提供的如下</td>
@@ -316,7 +317,7 @@
             </tr>
             <tr class="tr_height">
                 <td style="width: 15px;line-height:1.5em;"></td>
-                <td>首付(RMB)：<span style="text-decoration:underline;"><?php echo $sell->paymoney?></span> 余款(RMB)： <span style="text-decoration:underline;"><?php echo $sell->lastmoney?></span> 订金收据号：______________
+                <td style="font-size: 12px;">首付(RMB)：<span style="text-decoration:underline;"><?php echo $sell->paymoney?></span> 余款(RMB)： <span style="text-decoration:underline;"><?php echo $sell->lastmoney?></span> 订金收据号：______________
                 </td>
             </tr>
             <tr class="tr_height">

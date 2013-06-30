@@ -117,6 +117,9 @@ class stock_find extends Stock__Controller {
     }
 
     public function search() {
+//        $status = $_REQUEST['status'];
+//        $status = $this->input->get('status') ? $this->input->get('status') : 1;
+        $status = isset($_REQUEST['status']) ? $_REQUEST['status'] : 1;
         $this->_data['fun_path'] = "stock_find/search";
 
         //获取库房列表
@@ -137,27 +140,44 @@ class stock_find extends Stock__Controller {
         $brands = $this->brand_model->getAllByWhere();
         $this->_data['brand'] = $brands;
 
-//        $order = array ("createtime" => "desc");
         $order = array ();
-        if (isset($_REQUEST['statuskey'])) {
-//            $_REQUEST['statuskey'] = 1;
-//            $otherwehre = array ("statuskey =" => $_GET['statuskey']);
+
+        if ($status == 1000) {
+            $otherwhere = '';
         }
         else {
-            if (empty($_REQUEST['statuskey'])) {
-                $_REQUEST['statuskey'] = '1000';
-            }
-            else {
-                $_REQUEST['statuskey'] = 1;
-            }
-//            $_REQUEST['statuskey'] = 1;
-//            $otherwehre = array ("statuskey =" => '1');
+            $otherwhere = 'statuskey = '.$status;
         }
-        $otherwehre = array ();
-//        $otherwehre = array ("statuskey =" => '1');
 
-        $like = array ('code','title','factorycode','brandcode','color','storehouseid','typename','memo','barcode');
-        $this->dataList("stock/stock_search", $this->stock_model, $where = array ('statuskey'), $like, $order, $this->_data, $otherwehre);
+//        if ($storehouseid == '0') {
+//            $otherwhere = $status_where;
+//        }
+//        else {
+//            if (empty($status_where)) {
+//                $otherwhere = 'storehouseid = '.$storehouseid;
+//            }
+//            else {
+//                $otherwhere = 'storehouseid = '.$storehouseid.' and '.$status_where;
+//            }
+//
+//        }
+        $this->_data['status'] = $status;
+
+//        if (isset($_REQUEST['statuskey'])) {
+//
+//        }
+//        else {
+//            if (empty($_REQUEST['statuskey'])) {
+//                $_REQUEST['statuskey'] = '1000';
+//            }
+//            else {
+//                $_REQUEST['statuskey'] = 1;
+//            }
+//        }
+//        $otherwehre = array ();
+
+        $like = array ('code','title','factorycode','brandcode','color','typename','memo','barcode');
+        $this->dataList("stock/stock_search", $this->stock_model, $where = array ('storehouseid'), $like, $order, $this->_data, $otherwhere);
 //        $this->load->view('stock/stock_search',$this->_data);
     }
 

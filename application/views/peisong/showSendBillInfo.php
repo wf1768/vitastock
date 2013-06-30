@@ -133,6 +133,7 @@
                                                     <thead>
                                                     <tr>
                                                         <th>序号</th>
+                                                        <th>图片</th>
                                                         <th>名称</th>
                                                         <th>代码</th>
                                                         <th>描述</th>
@@ -151,6 +152,7 @@
                                                         <tr id="s<?php echo $row->id ?>">
 
                                                             <td><?php echo $num ?></td>
+                                                            <td><img class="thumbnail smallImg" src="<?php echo base_url('').$row->picpath ?>"></td>
                                                             <td><?php echo $row->title ?></td>
                                                             <td><?php echo $row->code ?></td>
                                                             <td><?php echo $row->memo ?></td>
@@ -198,6 +200,10 @@
                 .foorer_font {
                     font-size: 12px;
                     font-weight: blod;
+                }
+                img {
+                    width: 30px;
+                    height: 30px;
                 }
             </style>
             <table cellspacing="0"
@@ -264,7 +270,7 @@
                         <tr class="content_tr"
                             style="height: 30px; border: 1px #000 solid; text-align: center">
                             <td style="border: 1px #000 solid;"><?php echo $j + 1; ?></td>
-                            <td><img class="thumbnail smallImg" src="<?php echo base_url('').$list[$j]->barcode ?>"></td>
+                            <td><img class="thumbnail smallImg" src="<?php echo base_url('').$list[$j]->picpath ?>"></td>
                             <td style="border: 1px #000 solid;"><?php echo $list[$j]->title ?></td>
                             <td style="border: 1px #000 solid;"><?php echo $list[$j]->memo ?></td>
                             <td style="border: 1px #000 solid;"><?php echo $list[$j]->factoryname ?></td>

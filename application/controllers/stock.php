@@ -73,7 +73,7 @@ class stock extends Stock__Controller {
 
         $storehouseid = $_REQUEST['houseid'];
         $p = $this->input->get('p') ? $this->input->get('p') : 1;
-        $status = $this->input->get('status') ? $this->input->get('status') : 1;
+//        $status = $this->input->get('status') ? $this->input->get('status') : 1;
         $status = $_REQUEST['status'];
 
         if (isset ($_REQUEST['barcode']) && $_REQUEST['barcode'] != '') {
