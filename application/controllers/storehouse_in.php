@@ -46,6 +46,9 @@ class storehouse_in extends Stock__Controller {
         $this->load->model('s_storehouse_in_model');
         $this->load->model('stock_model');
         $this->load->model('stock_in_model');
+        $this->load->model('b_buy_model');
+        $this->load->model('apply_model');
+        $this->load->model('apply_stock_model');
 
         /** 在继承的自定义父类，获取系统配置。 */
         $this->_data = $this->get_stock_config('0','6');
@@ -208,15 +211,50 @@ class storehouse_in extends Stock__Controller {
             return;
         }
 
+        //办理入库时，判断入库的类型如果为订单来的。就将入库商品的状态修改为已销售，并与期货订单关联。等待销售提交销售合同单
+        $storehouse_in = $this->s_storehouse_in_model->getOne($storehouse_inid);
+        $frombuy = $storehouse_in[0]->frombuy;
+        if ($frombuy == 3) {
+            //如果是来自订单。获取订单id
+            $buy = $this->b_buy_model->getOne($storehouse_in[0]->buyid);
+            if (!$buy) {
+                $this->output->append_output($result);
+                return;
+            }
+            //获取订单id
+            $apply = $this->apply_model->getOne($buy[0]->applyid);
+            if (!$apply) {
+                $this->output->append_output($result);
+                return;
+            }
+        }
+
         try {
             //将入库商品状态修改
+            //判断是否是订单来的，商品状态不一样
+            $statuskey = '1';
+            $statusvalue = '在库';
+            if ($frombuy == 3) {
+//                $statuskey = '3';
+//                $statusvalue = '已销售';
+                $statuskey = '10';
+                $statusvalue = '期货待销售';
+            }
             foreach ($contentids as $id) {
                 $update_stock = array(
                     'id'            =>  $id,
-                    'statuskey'     =>  '1',
-                    'statusvalue'   =>  '在库'
+                    'statuskey'     =>  $statuskey,
+                    'statusvalue'   =>  $statusvalue
                 );
                 $this->dataUpdate($this->stock_model,$update_stock,false);
+                //如果是订单来的，将商品id与订单关联
+                if ($frombuy == 3) {
+                    $insert_apply_stock = array(
+                        'applyid'     =>  $apply[0]->id,
+                        'stockid'   =>  $id
+                    );
+                    $newid = $this->dataInsert($this->apply_stock_model,$insert_apply_stock,false);
+                }
             }
             //获取入库单下未入库商品。如果没有未入库的商品。将入库单状态修改。
 

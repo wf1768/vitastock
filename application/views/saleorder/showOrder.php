@@ -118,13 +118,12 @@
                                                     <th>代码</th>
                                                     <th>描述</th>
                                                     <th>厂家</th>
-<!--                                                    <th>品牌</th>-->
-<!--                                                    <th>类别</th>-->
                                                     <th>颜色</th>
                                                     <th>条形码</th>
                                                     <th>售价</th>
                                                     <th>库房</th>
                                                     <th>状态</th>
+                                                    <th>配送</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -142,6 +141,7 @@
                                                         <td><?php echo $row->salesprice ?></td>
                                                         <td><?php echo saleorder::getStorehouse($row->storehouseid); ?></td>
                                                         <td><?php echo $row->statusvalue;$num++ ?></td>
+                                                        <td><?php echo $row->sendtype ? '自提' : '配送'; ?></td>
                                                     </tr>
                                                     <?php endforeach;?>
                                                 </tbody>
@@ -182,6 +182,36 @@
                     <!-- /span9 -->
                 </div>
                 <!-- /row -->
+                <div class="widget widget-table">
+                    <div class="widget-header">
+                        <i class="icon-th-list"></i>
+                        <h3> 审核意见列表</h3>
+                    </div> <!-- /widget-header -->
+                    <div class="widget-content">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th> 审核时间</th>
+                                <th> 收款金额</th>
+                                <th> 余款</th>
+                                <th> 审核人</th>
+                                <th> 审核意见</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach($finance_check as $row):?>
+                                <tr>
+                                    <td><?php echo $row->financetime ?></td>
+                                    <td><?php echo $row->paymoney ?></td>
+                                    <td><?php echo $row->lastmoney ?></td>
+                                    <td><?php echo $row->financeman ?></td>
+                                    <td><?php echo $row->remark ?></td>
+                                </tr>
+                            <?php endforeach;?>
+                            </tbody>
+                        </table>
+                    </div> <!-- /widget-content -->
+                </div> <!-- /widget -->
             </div>
             <!-- /span9 -->
         </div>
@@ -223,21 +253,21 @@
                 <th colspan="7">
                     <table border="0" cellspacing="0" cellpadding="0" width="100%">
                         <tr align="center">
-                            <td style="text-align: right; width: 200px;"><img src='<?php echo base_url('public/img/logo.jpg') ?>' style="width: 60px;"></td>
-                            <td style="text-align:left; font-size: 20px;padding-bottom: 5px;padding-top: 10px">&nbsp;&nbsp;北京丰意德工贸有限公司销售合同</td>
+                            <td style="text-align: right; width: 150px;"><img src='<?php echo base_url('public/img/logo.jpg') ?>' style="width: 90px;"></td>
+                            <td style="text-align:left; font-size: 26px;padding-bottom: 5px;padding-top: 0px">&nbsp;&nbsp;北京丰意德工贸有限公司销售合同</td>
                         </tr>
                         <tr align="center">
-                            <td colspan="2" style="font-size: 10px;padding-bottom: 20px;padding-top: 10px">(现&nbsp;&nbsp;&nbsp;&nbsp;货)</td>
+                            <td colspan="2" style="font-size: 14px;padding-bottom: 10px;padding-top: 0px">(现&nbsp;&nbsp;&nbsp;&nbsp;货)</td>
                         </tr>
                     </table>
                     <table border="0" cellspacing="0" cellpadding="0" width="100%" class="print_font">
                         <tr>
 <!--                            <td style="width: 73%"></td>-->
-                            <td colspan="2" style="text-align: right">合同编号：<span style="font-size: 18px;color: red;"><?php echo $sell->sellnumber;?></span></td>
+                            <td colspan="2" style="font-size:14px;text-align: right">合同编号：<span style="font-size: 20px;color: red;"><?php echo $sell->sellnumber;?></span></td>
                         </tr>
                         <tr>
-                            <td>一.&nbsp;&nbsp;买方决定购买卖方提供的如下</td>
-                            <td style="text-align: right">销售店：<?php echo $sell->storehousecode ?> 签订日期：<?php echo date("Y-m-d"); ?></td>
+                            <td style="font-size: 14px;">一.&nbsp;&nbsp;买方决定购买卖方提供的如下</td>
+                            <td style="font-size:14px;text-align: right">销售店：<?php echo $sell->storehousecode ?> 签订日期：<?php echo $sell->selldate; ?></td>
                         </tr>
                     </table>
                 </th>
@@ -249,6 +279,7 @@
                 <th style="border:1px #000 solid;">数量</th>
                 <th style="border:1px #000 solid;">条形码</th>
                 <th style="border:1px #000 solid;">单价(RMB)</th>
+                <th style="border:1px #000 solid;">配送<br/>方式</th>
             </tr>
             </thead>
             <tbody >
@@ -261,6 +292,7 @@
                         <td style="border:1px #000 solid;"><?php echo $list[$j]->number ?></td>
                         <td style="border:1px #000 solid;"><?php echo $list[$j]->barcode; ?></td>
                         <td style="border:1px #000 solid;"><?php echo $list[$j]->salesprice; ?></td>
+                        <td style="border:1px #000 solid;"><?php echo $list[$j]->sendtype ? '自提' : '配送'; ?></td>
                     </tr>
                 <?php else :?>
                     <tr class="content_tr" style="height:30px;border:1px #000 solid;text-align: center">
@@ -273,7 +305,7 @@
                     </tr>
                 <?php endif ?>
             <?php endfor ?>
-                <tr style="height:30px;border:1px #000 solid;text-align: center">
+                <tr class="content_tr" style="height:30px;border:1px #000 solid;text-align: center">
                     <td style="border:1px #000 solid;"></td>
                     <td style="border:1px #000 solid;">总价(RMB)</td>
                     <td style="border:1px #000 solid;"></td>
@@ -290,7 +322,7 @@
                         ?>
                     </td>
                 </tr>
-                <tr style="height:30px;border:1px #000 solid;text-align: center">
+                <tr class="content_tr" style="height:30px;border:1px #000 solid;text-align: center">
                     <td style="border:1px #000 solid;"></td>
                     <td style="border:1px #000 solid;">折扣价(RMB)</td>
                     <td style="border:1px #000 solid;"></td>

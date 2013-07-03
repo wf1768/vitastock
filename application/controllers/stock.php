@@ -429,8 +429,6 @@ class stock extends Stock__Controller {
             //执行edit
             $this->_edit_stock($stockid,$p);
         }
-
-
     }
 
     /**
@@ -500,6 +498,45 @@ class stock extends Stock__Controller {
             }
             $this->error('保存出错或没有数据被修改。',site_url().'/stock/stock_pages?houseid='.$insert_stock['storehouseid'].'&p='.$p.'&barcode='.$search);
         }
+    }
+
+    /**
+     * ajax方式修改商品的配送类型
+     */
+    public function update_stock_sendtype() {
+        $result = false;
+//        $ids = $this->input->get('ids') ? $this->input->get('ids') : '';
+//        $sendtype = $this->input->get('sendtype') ? $this->input->get('sendtype') : '';
+
+        $ids = $_POST['ids'];
+        $sendtype = $_POST['sendtype'];
+
+        $ids = explode(',',$ids);
+
+        if (empty($ids)) {
+            $this->output->append_output($result);
+            return;
+        }
+        if (!isset($sendtype)) {
+            $this->output->append_output($result);
+            return;
+        }
+        try {
+            foreach ($ids as $id) {
+                $update_stock = array(
+                    'id' => $id,
+                    'sendtype' => $sendtype
+                );
+                $this->dataUpdate($this->stock_model,$update_stock,false);
+
+            }
+        }
+        catch (Exception $e) {
+            $this->output->append_output($result);
+            return;
+        }
+        $result = true;
+        $this->output->append_output($result);
     }
 
 

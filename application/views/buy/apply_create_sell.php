@@ -26,14 +26,18 @@
             <div class="span9">
                 <h1 class="page-title">
                     <i class="icon-th-list"></i>
-                    <a href="<?php echo site_url('buy/buy_list') ?>" class="path-menu-a"> 退单管理</a> > 添加销售单
+                    <a href="javascript:;" class="path-menu-a"> 期货管理</a> > 添加销售合同单
                 </h1>
-
+                <div class="alert alert-info">
+                    <button data-dismiss="alert" class="close" type="button">×</button>
+                    当前销售合同单，是期货商品到货后，销售自主生成销售合同单。期货商品可以分次生成多个销售合同单、多次审核配送。建议期货商品都到货后，一次性生成全部期货商品办理销售单。经财务审核后，直接办理送货。<br />
+                    本合同单，［总价］是按选择的商品自动计算总价。折扣总价，是按期货订单的［折扣率］乘以当前［总价］。［已付金额］为手填，不能大于［折扣总价］。余额为［折扣总价］减去［已付金额］。所有金额都可以手动更改。请确保金额的准确。
+                </div>
                 <div class="row">
                     <div class="span9">
                         <div class="widget">
                             <div class="widget-header">
-                                <h3>添加销售单</h3>
+                                <h3>添加销售合同单</h3>
                             </div>
                             <!-- /widget-header -->
                             <div class="widget-content">
@@ -44,6 +48,9 @@
                                         <div class="tab-pane active" id="1">
                                             <form class="dotables" onsubmit="return submitform();"
                                                   action="<?php echo site_url('saleorder/doAddOrder') ?>" method="post">
+                                                <input type="hidden" name="applyid"
+                                                       value="<?php echo  $apply[0]->id ?>"
+                                                       readonly>
                                                 <input type="hidden" name="createby"
                                                        value="<?php echo $this->account_info_lib->accountname ?>"
                                                        readonly>
@@ -56,7 +63,7 @@
                                                         </td>
                                                         <td>销售者</td>
                                                         <td><input type="text"
-                                                                   value="<?php echo $this->account_info_lib->accountname ?>"
+                                                                   value="<?php echo $apply[0]->applyby ?>"
                                                                    name="checkby" required></td>
 
                                                     </tr>
@@ -78,7 +85,7 @@
                                                             <select name="storehouseid">
                                                                 <?php foreach ($storehose as $key => $val): ?>
                                                                     <option
-                                                                        value="<?php echo $val->id ?>" <?php if ($sell[0]->storehouseid == $val->id) echo "selected"; ?>><?php echo $val->storehousecode?></option>
+                                                                        value="<?php echo $val->id ?>" <?php if ($apply[0]->storehouseid == $val->id) echo "selected"; ?>><?php echo $val->storehousecode?></option>
                                                                 <?php endforeach;?>
                                                             </select>
                                                         </td>
@@ -87,66 +94,66 @@
                                                         <td>总价</td>
                                                         <td><input type="text" value="0" id="totalmoney" name="totalmoney"  required  onkeypress="return isfloat(event)"></td>
                                                         <td>折扣总价(RMB)</td>
-                                                        <td><input type="text" value="<?php echo $sell[0]->discount ?>" id="discount" onblur="get_lastmoney()"
+                                                        <td><input type="text" value="" onblur="get_lastmoney()"
                                                                    onkeypress="return isfloat(event)"
-                                                                   name="discount" required></td>
+                                                                   id="discount" name="discount" required></td>
                                                     </tr>
                                                     <tr>
                                                         <td>已付金额(RMB)</td>
-                                                        <td><input type="text" value="<?php echo $sell[0]->paymoney ?>" onblur="get_lastmoney()"
-                                                                   id="paymoney" name="paymoney" onkeypress="return isfloat(event)" required></td>
+                                                        <td><input type="text" value="0" id="paymoney"
+                                                                   name="paymoney" onblur="get_lastmoney()" onkeypress="return isfloat(event)" required></td>
                                                         <td>未付金额(RMB)</td>
-                                                        <td><input type="text" value="<?php echo $sell[0]->lastmoney ?>" id="lastmoney"
+                                                        <td><input type="text" id="lastmoney" value="<?php echo $apply[0]->lastmoney ?>"
                                                                    name="lastmoney" onkeypress="return isfloat(event)" required></td>
                                                     </tr>
                                                     <tr>
                                                         <td>备注</td>
                                                         <td colspan="3"><input type="text" placeholder="请输入备注，也可不填"
                                                                                class="span5"
-                                                                               value="[原销售单号：<?php echo $sell[0]->sellnumber ?>]  <?php echo $sell[0]->remark ?>"
+                                                                               value="本销售单从期货订单生成。[期货单号：<?php echo $apply[0]->applynumber ?>]  <?php echo $apply[0]->remark ?>"
                                                                                name="remark"></td>
                                                     </tr>
                                                     <tr>
                                                         <td>客户名称</td>
                                                         <td><input type="text"
-                                                                   value="<?php echo $sell[0]->clientname ?>" required
+                                                                   value="<?php echo $apply[0]->clientname ?>" required
                                                                    placeholder="请输入客户名称" name="clientname">
                                                         </td>
                                                         <td>客户电话</td>
                                                         <td><input type="text"
-                                                                   value="<?php echo $sell[0]->clientphone ?>" required
+                                                                   value="<?php echo $apply[0]->clientphone ?>" required
                                                                    placeholder="请输入客户电话" name="clientphone">
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>客户地址</td>
                                                         <td colspan="3"><input type="text" required
-                                                                               value="<?php echo $sell[0]->clientadd ?>"
+                                                                               value="<?php echo $apply[0]->clientadd ?>"
                                                                                class="span5" placeholder="请输入客户地址"
                                                                                name="clientadd"></td>
                                                     </tr>
                                                 </table>
                                                 <div class="row">
                                                     <div class="span8">
-                                                        <label class="pull-left">
-                                                            <ul class="nav nav-pills">
-                                                                <li class="active"><a href=""
-                                                                                      id="addbuy-product">添加销售商品</a>
-                                                                </li>
-                                                                <li class="active"><a href="javascript:;"
-                                                                                      id="delete_product">删除销售商品</a>
-                                                                </li>
-                                                                <li class="active">
-                                                                    <input
-                                                                        style="margin-top:3px; margin-right:5px; margin-left:30px"
-                                                                        type="text" name="barcode" id="tiaomaadd"
-                                                                        value="<?php echo isset($_REQUEST['barcode']) ? $_REQUEST['barcode'] : ''; ?>"
-                                                                        placeholder="请输入条形码">
-                                                                </li>
-                                                                <li class="active"><a href="" id="tiaoadditem">添加商品</a>
-                                                                </li>
-                                                            </ul>
-                                                        </label>
+<!--                                                        <label class="pull-left">-->
+<!--                                                            <ul class="nav nav-pills">-->
+<!--                                                                <li class="active"><a href=""-->
+<!--                                                                                      id="addbuy-product">添加销售商品</a>-->
+<!--                                                                </li>-->
+<!--                                                                <li class="active"><a href="javascript:;"-->
+<!--                                                                                      id="delete_product">删除销售商品</a>-->
+<!--                                                                </li>-->
+<!--                                                                <li class="active">-->
+<!--                                                                    <input-->
+<!--                                                                        style="margin-top:3px; margin-right:5px; margin-left:30px"-->
+<!--                                                                        type="text" name="barcode" id="tiaomaadd"-->
+<!--                                                                        value="--><?php //echo isset($_REQUEST['barcode']) ? $_REQUEST['barcode'] : ''; ?><!--"-->
+<!--                                                                        placeholder="请输入条形码">-->
+<!--                                                                </li>-->
+<!--                                                                <li class="active"><a href="" id="tiaoadditem">添加商品</a>-->
+<!--                                                                </li>-->
+<!--                                                            </ul>-->
+<!--                                                        </label>-->
                                                         <label class="pull-right">
                                                             <div class="btn-group">
                                                                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="c-666">修改配送方式：</span>
@@ -314,11 +321,14 @@
 
 var josnData;
 var idAray = new Array();
+//折扣率
+var discount = 0;
 $(document).ready(function () {
+    //页面刷新初始化时，将总价设置为0
     $('#totalmoney').val('0');
-//    $('#paymoney').val('0');
-//    $('#lastmoney').val('0');
-//    $('#discount').val('0');
+    $('#paymoney').val('0');
+    $('#lastmoney').val('0');
+
     //================================================
     $("#tiaoma").keydown(function (e) {
         if (e.keyCode == 13) {
@@ -386,7 +396,6 @@ $(document).ready(function () {
                 else {
                     list.push('<td class="table-textcenter" title="'+item.memo+'">'+item.memo+'</td>');
                 }
-
                 list.push('<td class="table-textcenter">' + item.color + '</td>');
                 list.push('<td class="table-textcenter">' + item.salesprice + '</td>');
                 list.push('<td class="table-textcenter">' + item.storehouse + '</td>');
@@ -413,6 +422,19 @@ $(document).ready(function () {
 
     });
     returnContent();
+
+    //计算订单的折扣率。用来计算当前销售单的折扣总价
+    discount = <?php
+        if ($apply[0]->discount >0 && $apply[0]->totalmoney >0) {
+            echo ((round($apply[0]->discount/$apply[0]->totalmoney, 2)));
+        }
+        else {
+            echo '0';
+        }
+    ?>;
+    //计算当前销售单折扣总价
+    $('#discount').val(parseFloat($('#totalmoney').val())*discount);
+    get_lastmoney();
     //添加信息到销售单 additem
     $("#additem").click(function () {
         $('input[name="chkitem"]').filter(":checked").each(function (i, item) {
@@ -537,35 +559,7 @@ function edit_sendtype(sendtype) {
     });
 
 }
-//计算余额
-function get_lastmoney() {
-    var paymoney = $('#paymoney').val();
-    var lastmoney = $('#lastmoney').val();
-    var discount = $('#discount').val();
-    var totalmoney = $('#totalmoney').val();
 
-    if (parseFloat(discount) > parseFloat(totalmoney)) {
-        openalert('您输入的折扣总价，大于总价，这不符合逻辑');
-        $('#discount').val('0');
-        return;
-    }
-
-    if (paymoney == '') {
-        $('#paymoney').val('0');
-    }
-
-
-    if (parseFloat(paymoney) > parseFloat(discount)) {
-        openalert('您输入的已付金额，大于折扣总价，这不符合逻辑');
-        $('#paymoney').val('0');
-        var paymoney = $('#paymoney').val();
-        $('#lastmoney').val(parseFloat(discount) - parseFloat(paymoney));
-    }
-    else {
-        $('#lastmoney').val(parseFloat(discount) - parseFloat(paymoney));
-    }
-
-}
 
 function autoAddToBill() {
     var barcode = $("#tiaomaadd").val();
@@ -618,6 +612,34 @@ function returnContent() {
     })
 }
 
+function get_lastmoney() {
+    var paymoney = $('#paymoney').val();
+    var lastmoney = $('#lastmoney').val();
+    var discount = $('#discount').val();
+    var totalmoney = $('#totalmoney').val();
+
+    if (parseFloat(discount) > parseFloat(totalmoney)) {
+        openalert('您输入的折扣总价，大于总价，这不符合逻辑');
+        $('#discount').val('0');
+        return;
+    }
+
+    if (paymoney == '') {
+        $('#paymoney').val('0');
+    }
+
+
+    if (parseFloat(paymoney) > parseFloat(discount)) {
+        openalert('您输入的已付金额，大于折扣总价，这不符合逻辑');
+        $('#paymoney').val('0');
+        var paymoney = $('#paymoney').val();
+        $('#lastmoney').val(parseFloat(discount) - parseFloat(paymoney));
+    }
+    else {
+        $('#lastmoney').val(parseFloat(discount) - parseFloat(paymoney));
+    }
+}
+
 //添加商品函数
 function addProToBill(id) {
     var listCon = new Array();
@@ -640,6 +662,9 @@ function addProToBill(id) {
                 listCon.push('<td class="table-textcenter">' + item.code + '</td>');
                 listCon.push('<td class="table-textcenter">' + item.memo + '</td>');
                 listCon.push('<td class="table-textcenter">' + item.factoryname + '</td>');
+//     	         listCon.push('<td class="table-textcenter">'+item.brandname+'</td>');
+//     	         listCon.push('<td class="table-textcenter">'+item.typename+'</td>');
+//     	         listCon.push('<td class="table-textcenter">'+item.color+'</td>');
                 listCon.push('<td class="table-textcenter">' + item.barcode + '</td>');
                 listCon.push('<td class="table-textcenter">');
                 listCon.push('<input readonly type="text" placeholder="留空则为原价格"  class="myaddclass span1" name="price[' + item.id + ']" value="' + item.salesprice + '" />');

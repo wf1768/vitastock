@@ -111,7 +111,7 @@
         row.append(td7);
 
         var td8 = $("<td></td>");
-        if (s_number == '') {
+        if (s_number == '' || s_number == '0') {
             s_number = '1';
         }
         td8.append(s_number);
@@ -121,12 +121,15 @@
         if (s_salesprice == '') {
             s_salesprice = '0';
         }
-//        td9.append(s_salesprice);
-        td9.append('<input  readonly type="text" class="myaddclass span1" name="price[' + row_count + ']" value="' + s_salesprice + '" />');
 
+        var total_sale = s_salesprice * s_number;
+//        td9.append(s_salesprice);
+        td9.append('<input  readonly type="hidden" class="myaddclass span1" name="price[' + row_count + ']" value="' + s_salesprice + '" />');
+        td9.append('<input type="hidden" name="total_sale['+ row_count +']" value="'+ total_sale +'" />');
+        td9.append(s_salesprice);
         row.append(td9);
 
-        $('#totalmoney').val(parseFloat($('#totalmoney').val()) + parseFloat(s_salesprice));
+        $('#totalmoney').val(parseFloat($('#totalmoney').val()) + parseFloat(s_salesprice) * s_number);
 
         var td10 = $("<td></td>");
         td10.append(s_remark);
@@ -159,7 +162,8 @@
             if($(this).attr("checked") == 'checked') { //注意：此处判断不能用$(this).attr("checked")==‘true'来判断。
 
                 var price = parseFloat($("input[name='price["+this.value+"]']").val());
-                $('#totalmoney').val(parseFloat($('#totalmoney').val()) - price);
+                var total_sale = parseFloat($("input[name='total_sale["+this.value+"]']").val());
+                $('#totalmoney').val(parseFloat($('#totalmoney').val()) - total_sale);
                 $(this).parent().parent().remove();
                 delete add_data[$(this).val()];
             }
@@ -352,18 +356,18 @@
                                         </tr>
                                         <tr>
                                             <td style="vertical-align:middle">客户名称</td>
-                                            <td><input type="text" class="span2" id="clientname"
+                                            <td><input type="text" class="span2" id="clientname" required
                                                        name="clientname" required style="margin-bottom: 0px;"  placeholder="必须填写"
                                                        value="<?php echo set_value('clientname'); ?>"> *
                                             </td>
                                             <td style="vertical-align:middle">客户电话</td>
-                                            <td><input type="text" class="span2" id="clientphone" style="margin-bottom: 0px;"
+                                            <td><input type="text" class="span2" id="clientphone" style="margin-bottom: 0px;" required
                                                        name="clientphone" value="<?php echo set_value('clientphone'); ?>">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td style="vertical-align:middle">客户地址</td>
-                                            <td colspan="3"><input type="text" class="span5" id="clientadd"
+                                            <td colspan="3"><input type="text" class="span5" id="clientadd" required
                                                        name="clientadd" required style="margin-bottom: 0px;"
                                                        value="<?php echo set_value('clientadd'); ?>">
                                             </td>
@@ -459,28 +463,3 @@
 
 
 <?php $this->load->view("common/footer"); ?>
-
-<!--<style>-->
-<!--    <!---->
-<!--    .modal {-->
-<!--        background-clip: padding-box;-->
-<!--        background-color: #FFFFFF;-->
-<!--        border: 1px solid rgba(0, 0, 0, 0.3);-->
-<!--        border-radius: 6px 6px 6px 6px;-->
-<!--        box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);-->
-<!--        left: 50%;-->
-<!--        margin-left: -375px;-->
-<!--        outline: 0 none;-->
-<!--        position: fixed;-->
-<!--        top: 10%;-->
-<!--        width: 746px;-->
-<!--        z-index: 1050;-->
-<!--    }-->
-<!--    .modal-body {-->
-<!--        max-height: 380px;-->
-<!--        overflow-y: auto;-->
-<!--        padding: 15px;-->
-<!--        position: relative;-->
-<!--    }-->
-<!--    -->-->
-<!--</style>-->

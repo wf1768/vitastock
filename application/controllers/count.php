@@ -42,7 +42,7 @@ class count extends Stock__Controller {
 			do {
 				$times = mktime(0, 0, 0, date("m", $stimes) + $p, date("d", $stimes), date("Y", $stimes));
 				$data = date("Y-m", $times);
-				$sql = 'SELECT count(*) count FROM `e_sell` s ,e_sell_content c where s.id=c.sellid  and s.createtime  like "' . $data . '%"';
+				$sql = 'SELECT count(*) count FROM `e_sell` s ,e_sell_content c where s.id=c.sellid and s.status != 1 and s.createtime  like "' . $data . '%"';
 				$res = $this->db->query($sql)->result();
 				$ydata[] = intval($res[0]->count);
 				$xdata[] = date("y/m", $times);
@@ -55,7 +55,7 @@ class count extends Stock__Controller {
 			for ($i = 12; $i > -1; $i--) {
 				$times = mktime(0, 0, 0, date("m") - $i, date("d"), date("Y"));
 				$data = date("Y-m", $times);
-				$sql = 'SELECT count(*) count FROM `e_sell` s ,e_sell_content c where s.id=c.sellid  and s.createtime  like "' . $data . '%"';
+				$sql = 'SELECT count(*) count FROM `e_sell` s ,e_sell_content c where s.id=c.sellid and s.status != 1 and s.createtime  like "' . $data . '%"';
 				$res = $this->db->query($sql)->result();
 				$ydata[] = intval($res[0]->count);
 				$xdata[] = date("y/m", $times);
@@ -130,7 +130,7 @@ class count extends Stock__Controller {
 		$stroelist = $this->storehouse->getAllByWhere();
 		foreach ($res['list'] as $sval) {
 			foreach ($stroelist as $val) {
-				$sql = "select count(*) as count from  s_stock  where statuskey=1 and  title='" . $sval->title . "' and storehouseid=" . $val->id;
+				$sql = "select count(*) as count from  s_stock  where statuskey=1 and  title='" . addslashes($sval->title) . "' and storehouseid=" . $val->id;
 				$dres = $this->db->query($sql)->result();
 				$outdata[$sval->title][] = $dres[0]->count;
 			}
@@ -148,6 +148,7 @@ class count extends Stock__Controller {
 	*/
 	public function cwCount() {
 		$allcount = 0;
+        $all_discount = 0;
 		if (isset ($_POST['start'])) {
 			$stimes = strtotime($_POST['start']);
 			$ntimes = strtotime($_POST['end']);
@@ -158,12 +159,18 @@ class count extends Stock__Controller {
 			do {
 				$times = mktime(0, 0, 0, date("m", $stimes) + $p, date("d", $stimes), date("Y", $stimes));
 				$data = date("Y-m", $times);
-				$sql = 'SELECT sum(totalmoney) count FROM `e_sell` s where  s.createtime  like "' . $data . '%"';
+				$sql = 'SELECT sum(totalmoney) count FROM `e_sell` s where s.createtime  like "' . $data . '%"';
 				$res = $this->db->query($sql)->result();
 				$ydata[] = intval($res[0]->count);
 				$xdata[] = date("y/m", $times);
+                //计算折扣总价
+                $sql_dis = 'SELECT sum(totalmoney) count FROM `e_sell` s where s.status != 1 and s.createtime  like "' . $data . '%"';
+                $res_dis = $this->db->query($sql_dis)->result();
+                $discountdata[] = intval($res_dis[0]->count);
+
 				;
 				$allcount += intval($res[0]->count);
+                $all_discount += intval($res_dis[0]->count);
 				$start = date("Y-m", $times);
 				$p++;
 			} while ($start != $end);
@@ -177,6 +184,11 @@ class count extends Stock__Controller {
 				$xdata[] = date("y/m", $times);
 				;
 				$allcount += intval($res[0]->count);
+                //计算折扣总价
+                $sql_dis = 'SELECT sum(totalmoney) count FROM `e_sell` s  where s.status != 1 and  s.createtime  like "' . $data . '%"';
+                $res_dis = $this->db->query($sql_dis)->result();
+                $discountdata[] = intval($res_dis[0]->count);
+                $all_discount += intval($res_dis[0]->count);
 			}
 		}
 		$this->_data['ydata'] = json_encode($ydata);
@@ -184,6 +196,10 @@ class count extends Stock__Controller {
 		$this->_data['ydatas'] = $ydata;
 		$this->_data['xdatas'] = $xdata;
 		$this->_data['allcount'] = $allcount;
+        //折扣总价
+        $this->_data['discountdata'] = json_encode($discountdata);
+        $this->_data['discountdatas'] = $discountdata;
+        $this->_data['all_discount'] = $all_discount;
 		//==================================================================
 		$outdata = array ();
 		$this->_data['fun_path'] = "count/cwCount";
@@ -193,7 +209,7 @@ class count extends Stock__Controller {
 		$stroelist = $this->storehouse->getAllByWhere();
 		foreach ($res['list'] as $sval) {
 			foreach ($stroelist as $val) {
-				$sql = "select count(*) as count ,SUM(salesprice) al from  s_stock where title='" . $sval->title . "' and storehouseid=" . $val->id;
+				$sql = "select count(*) as count ,SUM(salesprice) al from  s_stock where title='" . addslashes($sval->title) . "' and storehouseid=" . $val->id;
 				$dres = $this->db->query($sql)->result();
 				$outdata[$sval->title][] = $dres[0];
 			}

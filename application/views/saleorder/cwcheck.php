@@ -14,38 +14,43 @@
                     <i class="icon-th-list"></i>
                     <a href="<?php echo site_url('saleorder/orderList') ?>" class="path-menu-a">销售单管理</a> > 销售单列表
                 </h1>
-                <div class="row">
-                    <form id="stock_list_btn_form" name="stock_list_btn_form"
-                          action="<?php echo site_url('saleorder/orderList') ?>" method="POST" class="form-inline">
-                        <div class="span5">
-                            <label>
-                                审核类型：
-                                <select id="types">
-                                    <option
-                                        value="0" <?php if (isset($_GET['type']) && $_GET['type'] == 0) echo "selected"?>>
-                                        已结束
-                                    </option>
-                                    <option
-                                        value="1" <?php if (isset($_GET['type']) && $_GET['type'] == 1) echo "selected"?>>
-                                        未结束
-                                    </option>
-                                    <option
-                                        value="2" <?php if (isset($_GET['type']) && $_GET['type'] == 2) echo "selected"?>>
-                                        未审核
-                                    </option>
-                                </select>
-                            </label>
+                <div class="minbox">
+                    <div class="part_search">
+                        <div class="navbar">
+                            <div class="navbar-inner">
+                                <form class="navbar-form" method="get" id="searchfrom" style="margin-bottom:5px">
+                                    <font class="myfont">销售单号：</font>
+                                    <input type="text" name="sellnumber" id="sellnumber"
+                                           value="<?php echo isset($_REQUEST['sellnumber']) ? $_REQUEST['sellnumber'] : ''; ?>"
+                                           placeholder="请输入销售单编号">
+
+                                    &nbsp;&nbsp;<font class="myfont">&nbsp;&nbsp;&nbsp;销售店：</font>
+                                    <select name="storehouseid">
+                                        <option value="">请选择</option>
+                                        <?php foreach ($storehouse as $val): ?>
+                                            <option value="<?php echo $val->id; ?>"
+                                                <?php if (isset($_REQUEST['storehouseid']) && $_REQUEST['storehouseid'] == $val->id) {
+                                                echo "selected";
+                                            }?>><?php echo $val->storehousecode;?></option>
+                                        <?php endforeach;?>
+                                    </select>
+                                    <br />
+                                    <font class="myfont">客户名称：</font>
+                                    <input type="text" name="clientname" id="clientname"
+                                           value="<?php echo isset($_REQUEST['clientname']) ? $_REQUEST['clientname'] : ''; ?>"
+                                           placeholder="请输入客户名称">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font class="myfont">状态：</font>
+                                    <select name="type">
+                                        <option value="2" <?php if ($type == 2) echo 'selected' ?>>未审核</option>
+                                        <option value="1" <?php if ($type == 1) echo 'selected' ?>>未结束</option>
+                                        <option value="0" <?php if ($type == 0) echo 'selected' ?>>已结束</option>
+                                    </select>
+                                    <button style="margin-left:20px" id="search" type="submit" class="btn btn-primary">&nbsp;&nbsp;搜&nbsp;&nbsp;索&nbsp;&nbsp;</button>
+                                </form>
+
+                            </div>
                         </div>
-                        <div class="span4">
-                            <input type="text" style="display:none">
-                            <label class="pull-right">单号:
-                                <input id="searchTxt" type="text"
-                                       value="<?php echo isset($_REQUEST['sellnumber']) ? $_REQUEST['sellnumber'] : ''; ?>"
-                                       name="sellnumber" placeholder="请输销售单号">
-                                <input type="submit" value="查询" class="btn btn-primary"/>
-                            </label>
-                        </div>
-                    </form>
+                    </div>
                 </div>
                 <div class="widget widget-table">
                     <div class="widget-header">
@@ -66,6 +71,7 @@
                                 <th> 客户电话</th>
                                 <th> 操作人</th>
                                 <th>状态</th>
+                                <th>销售店</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -80,6 +86,7 @@
                                     <td><?php echo $row->clientphone ?></td>
                                     <td><?php echo $row->checkby ?></td>
                                     <td><?php $status = array('0' => '待审核','1' => '退单', '2' => '已审核', '3' => '已配送','6' => '期货部分配送');echo $status[$row->status] ?></td>
+                                    <td><?php echo $row->storehousecode ?></td>
                                     <td>
                                         <?php if ($row->status == 0 || $row->financestatus == 0): ?>
                                             <a href="<?php echo site_url("saleorder/shCwCheck?id=" . $row->id.'&type='.$_GET['type']) ?>"

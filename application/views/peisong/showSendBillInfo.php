@@ -122,7 +122,7 @@
                                                         <td colspan="3"><?php echo $sendinfo->clientadd;?></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>备注</td>
+                                                        <td>配送备注</td>
                                                         <td colspan="3"><?php echo $sendinfo->remark;?></td>
                                                     </tr>
                                                 </table>
@@ -297,6 +297,9 @@
                     <td style="border: 1px #000 solid;">总计</td>
                     <td style="border: 1px #000 solid;"></td>
                     <td style="border: 1px #000 solid;"></td>
+                    <td style="border: 1px #000 solid;"></td>
+                    <td style="border: 1px #000 solid;"></td>
+                    <td style="border: 1px #000 solid;"></td>
                     <td style="border: 1px #000 solid;"><?php
                         if ($i + 1 == ceil(count($list) / $page)) {
                             echo $allcount;
@@ -304,6 +307,7 @@
                             echo '见尾页';
                         }
                         ?></td>
+                    <td style="border: 1px #000 solid;"></td>
                 </tr>
                 </tbody>
             </table>

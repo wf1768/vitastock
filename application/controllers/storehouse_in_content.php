@@ -55,6 +55,11 @@ class storehouse_in_content extends Stock__Controller {
         $this->load->library('stock_lib');
         $this->load->library('barcode_lib');
 
+        $this->load->model('b_buy_model');
+        $this->load->model('apply_model');
+        $this->load->model('apply_stock_model');
+
+
 
         /** 在继承的自定义父类，获取系统配置。 */
         $this->_data = $this->get_stock_config('0','6');
@@ -121,6 +126,8 @@ class storehouse_in_content extends Stock__Controller {
                 );
                 $this->dataUpdate($this->stock_model,$update_stock,false);
 
+                $this->handle_apply($row);
+
                 //判断当前商品的入库单下商品是否全部入库。如果全部入库，结束入库单
                 $tmp = $this->stock_in_model->getAllByWhere(array('stockid'=>$row->id));
 
@@ -165,6 +172,46 @@ class storehouse_in_content extends Stock__Controller {
     }
 
     /**
+     * 如果当前入库商品是从期货来的。那更改商品状态为10  期货待销售。
+     * @param $row
+     */
+    public function handle_apply($row) {
+        //获取当前入库商品的入库单对应关系
+        $tmp = $this->stock_in_model->getAllByWhere(array('stockid'=>$row->id));
+
+        //办理入库时，判断入库的类型如果为订单来的。就将入库商品的状态修改为已销售，并与期货订单关联。等待销售提交销售合同单
+        $storehouse_in = $this->s_storehouse_in_model->getOne($tmp[0]['inid']);
+        $frombuy = $storehouse_in[0]->frombuy;
+        if ($frombuy == 3) {
+            //如果是来自订单。获取订单id
+            $buy = $this->b_buy_model->getOne($storehouse_in[0]->buyid);
+            if (!$buy) {
+                return;
+            }
+            //获取订单id
+            $apply = $this->apply_model->getOne($buy[0]->applyid);
+            if (!$apply) {
+                return;
+            }
+            //将入库商品状态修改
+            //判断是否是订单来的，商品状态不一样
+            $update_stock = array(
+                'id'            =>  $row->id,
+                'statuskey'     =>  '10',
+                'statusvalue'   =>  '期货待销售'
+            );
+            $this->dataUpdate($this->stock_model,$update_stock,false);
+
+            $insert_apply_stock = array(
+                'applyid'     =>  $apply[0]->id,
+                'stockid'   =>  $row->id
+            );
+            $newid = $this->dataInsert($this->apply_stock_model,$insert_apply_stock,false);
+        }
+        return;
+    }
+
+    /**
      * 扫描条码，办理入库
      */
     public function handle_in_by_barcode() {
@@ -177,10 +224,11 @@ class storehouse_in_content extends Stock__Controller {
             return;
         }
         $row = $this->stock_model->getOneByWhere(array('barcode' => $barcode));
-        if ($row->statuskey == 1) {
+        if ($row->statuskey != 0) {
             $this->output->append_output($result);
             return;
         }
+
         //如果auto是1 ，自动入库
         if ($auto == 1) {
             $update_stock = array(
@@ -189,13 +237,14 @@ class storehouse_in_content extends Stock__Controller {
                 'statusvalue'   =>  '在库'
             );
             $this->dataUpdate($this->stock_model,$update_stock,false);
+            $this->handle_apply($row);
         }
 
         $row = $this->stock_model->getOneByWhere(array('barcode' => $barcode));
 
-        //判断当前商品的入库单下商品是否全部入库。如果全部入库，结束入库单
         $tmp = $this->stock_in_model->getAllByWhere(array('stockid'=>$row->id));
 
+        //判断当前商品的入库单下商品是否全部入库。如果全部入库，结束入库单
         $stock_in = false;
         $stock_in = $this->stock_in_model->getAllByWhere(array('inid'=>$tmp[0]['inid']),array(),array());
         if ($stock_in) {
@@ -261,6 +310,8 @@ class storehouse_in_content extends Stock__Controller {
                     'statusvalue'   =>  '在库'
                 );
                 $this->dataUpdate($this->stock_model,$update_stock,false);
+
+                $this->handle_apply($row);
 
                 $row = $this->stock_model->getOneByWhere(array('barcode' => $row->barcode));
 

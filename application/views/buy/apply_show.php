@@ -183,6 +183,92 @@
         $('#apply-content-dialog').modal('show');
     }
 
+    //显示入库商品
+    function show_stock_content(id) {
+        if (id == '') {
+            openalert('执行操作出错，请重新尝试或与管理员联系。');
+            return;
+        }
+        var stype = '<?php echo $stype ?>';
+        var data= 'id='+id + '&stype=' + stype;
+        $.getJSON("<?php echo site_url('apply/show_stock_content')?>",data,function(data){
+            josnData=data;
+            $.each(data, function(i,item){
+                $('#stock_title').html(item.title);
+                $('#stock_code').html(item.code);
+                $('#stock_factory').html(item.factoryname);
+                $('#stock_brand').html(item.brandname);
+                $('#stock_type').html(item.typename);
+                $('#stock_color').html(item.color);
+                $('#stock_memo').html(item.memo);
+                $('#stock_number').html(item.number);
+                $('#stock_barcode').html(item.barcode);
+                $('#stock_storehouse').html(item.storehouse);
+                $('#stock_salesprice').html(item.salesprice);
+                $('#stock_remark').html(item.remark);
+            })
+        })
+        $('#stock-dialog').modal('show');
+    }
+
+    /**
+     * 订单处理人员，有权移除已入库的订购商品。例如订购商品有损坏之类的。换成其他商品
+     */
+    function remove_stock(id) {
+        if (id == '') {
+            openalert('执行操作出错，请重新尝试或与管理员联系。');
+            return;
+        }
+<!--        var stype = '--><?php //echo $stype ?><!--';-->
+
+        bootbox.confirm("确认要移除选择的商品吗？<br /> <span style='color: red'>被移除的商品状态变为［在库］。不再被与当前期货订单关联。</span>", function(result) {
+            if(result){
+                $.ajax({
+                    type:"post",
+                    data: 'id='+id,
+                    url:"<?php echo site_url('apply/remove_stock')?>",
+                    success: function(data){
+                        if (data) {
+                            alert('商品移除成功。')
+                            window.location.reload();
+                        }
+                        else {
+                            openalert('处理出错，请重新尝试或与管理员联系。');
+                        }
+                    },
+                    error: function() {
+                        openalert('执行操作出错，请重新尝试或与管理员联系。');
+                    }
+                });
+            }
+        })
+    }
+
+    function handle_create_order(id) {
+        if (id == "") {
+            return;
+        }
+
+        var str="";
+        $("input[name='checkbox_stock']").each(function(){
+            if($(this).attr("checked") == 'checked'){
+                str+=$(this).val()+",";
+            }
+        })
+        if (str == "") {
+            openalert('请选择生成销售合同单的期货商品。');
+            return;
+        }
+        str = str.substring(0,str.length-1);
+
+        bootbox.confirm("确定要将选中的期货商品生成销售合同单吗？<br><font color='red'>注意：选择的期货商品生成销售合同单，经财务审批后，直接办理送货。", function(result) {
+            if(result){
+                window.location.href= '<?php echo site_url() ?>/apply/cteate_sell?id=' + id + '&contentid=' + str;
+            }
+        })
+
+    }
+
     $(function() {
 
         $("#select-all").click(function(){
@@ -191,6 +277,43 @@
             }
             else {
                 $("input[name='checkbox']").attr("checked",false);
+            }
+        });
+
+        $("#select-all-stock").click(function(){
+            if ($(this).attr("checked") == 'checked') {
+                $("input[name='checkbox_stock']").attr("checked",$(this).attr("checked"));
+            }
+            else {
+                $("input[name='checkbox_stock']").attr("checked",false);
+            }
+        });
+
+        //订单处理人员，通过条码添加商品
+        $("#barcode").keydown(function(e){
+            if(e.keyCode==13){
+                var barcode = $('#barcode').val();
+                var applyid = $('#applyid').val();
+                if (barcode !='') {
+                    $.ajax({
+                        type:"post",
+                        data: 'barcode='+barcode + '&applyid=' + applyid,
+                        url:"<?php echo site_url('apply/add_stock')?>",
+                        success: function(data){
+                            if (data) {
+                                alert('商品添加成功。')
+                                window.location.reload();
+                            }
+                            else {
+                                openalert('添加失败。<br /> 有以下可能造成：<br /> 1.商品状态不是［在库］。<br /> 2.商品已在当前期货订单下。<br /> 3.没有找到要添加d商品。');
+                            }
+                        },
+                        error: function() {
+                            openalert('执行操作出错，请重新尝试或与管理员联系。');
+                        }
+                    });
+                }
+
             }
         });
 
@@ -203,6 +326,8 @@
         $('#datepic').datepicker().on('show', function(ev) {
             $('.datepicker').css('z-index','1052');
         });
+
+        $("a[data-toggle=popover]").popover();
     })
 
     function onPrint() {
@@ -352,6 +477,63 @@
         <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
     </div>
 </div>
+
+<!-- Modal -->
+<div id="stock-dialog" class="modal hide fade" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        订货商品入库信息详细
+    </div>
+    <div class="modal-body">
+        <table class="table table-striped table-bordered">
+            <tbody>
+            <tr>
+                <td style="vertical-align:middle">商品名称</td>
+                <td id="stock_title"></td>
+                <td style="vertical-align:middle">商品代码</td>
+                <td id="stock_code"></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:middle">厂家</td>
+                <td id="stock_factory"></td>
+                <td style="vertical-align:middle">品牌</td>
+                <td id="stock_brand"></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:middle">类别</td>
+                <td id="stock_type"></td>
+                <td style="vertical-align:middle">颜色</td>
+                <td id="stock_color"></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:middle">商品描述</td>
+                <td colspan="3" id="stock_memo"></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:middle">库房</td>
+                <td id="stock_storehouse"></td>
+                <td style="vertical-align:middle">条形码</td>
+                <td id="stock_barcode"></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:middle">数量</td>
+                <td id="stock_number"></td>
+                <td style="vertical-align:middle">售价（单价）</td>
+                <td id="stock_salesprice"></td>
+            </tr>
+            <tr>
+                <td style="vertical-align:middle">备注</td>
+                <td colspan="3" id="stock_remark"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    </div>
+</div>
+
+
 
 <div id="content">
     <div class="container">
@@ -513,7 +695,6 @@
                                 <th>售价（单价）</th>
                                 <th>经办人</th>
                                 <th>预计到港日期</th>
-<!--                                <th>备注</th>-->
                                 <th>状态</th>
                                 <th>处理</th>
                                 <th>查看</th>
@@ -523,19 +704,20 @@
                             <?php if(isset($apply_content)):?>
                                 <?php $n = 1; foreach($apply_content as $apply):?>
                                     <tr>
+                                        <?php if ($apply->status == 3 || $apply->status == 4) : ?>
+                                        <td></td>
+                                        <?php else : ?>
                                         <td><input type="checkbox" name="checkbox" value="<?php echo $apply->id ?>"/></td>
+                                        <?php endif ?>
                                         <td><?php echo $n ?></td>
                                         <td><?php echo $apply->title; ?></td>
                                         <td title="<?php echo $apply->code ?>"><?php echo Common::subStr($apply->code, 0, 6) ?></td>
-<!--                                        <td>--><?php //echo $apply->code; ?><!--</td>-->
                                         <td><?php echo $apply->factoryname; ?></td>
                                         <td title="<?php echo $apply->memo ?>"><?php echo Common::subStr($apply->memo, 0, 6) ?></td>
-<!--                                        <td>--><?php //echo $apply->memo ?><!--</td>-->
                                         <td><?php echo $apply->number; ?></td>
                                         <td><?php echo $apply->salesprice; ?></td>
                                         <td><?php echo $apply->checkby; ?></td>
                                         <td><?php echo strtotime($apply->forecastgetdate)?$apply->forecastgetdate:''; ?></td>
-<!--                                        <td>--><?php //echo $apply->remark; ?><!--</td>-->
                                         <td><?php echo $apply->statusvalue; $n++?></td>
                                         <td><a href="javascript:;" class="btn btn-small btn-info" onclick="open_apply_content_deal_dialog('<?php echo $apply->id ?>')" >详细</a></td>
                                         <td><a href="javascript:;" class="btn btn-small btn-info" onclick="show_apply_content('<?php echo $apply->id ?>')">查看</a></td>
@@ -547,6 +729,36 @@
                     </div>
                     <!-- /widget-content -->
                 </div>
+                <div class="widget widget-table">
+                    <div class="widget-header">
+                        <i class="icon-th-list"></i>
+                        <h3> 审核意见列表</h3>
+                    </div> <!-- /widget-header -->
+                    <div class="widget-content">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th> 审核时间</th>
+                                <th> 收款金额</th>
+                                <th> 余款</th>
+                                <th> 审核人</th>
+                                <th> 审核意见</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach($finance_check as $check):?>
+                                <tr>
+                                    <td><?php echo $check->financetime ?></td>
+                                    <td><?php echo $check->paymoney ?></td>
+                                    <td><?php echo $check->lastmoney ?></td>
+                                    <td><?php echo $check->financeman ?></td>
+                                    <td><?php echo $check->remark ?></td>
+                                </tr>
+                            <?php endforeach;?>
+                            </tbody>
+                        </table>
+                    </div> <!-- /widget-content -->
+                </div> <!-- /widget -->
                 <div class="widget widget-table">
                     <div class="widget-header">
                         <i class="icon-th-list"></i>
@@ -610,7 +822,7 @@
                                             <td><?php echo $buy->buyman ?></td>
                                             <td><?php echo $buy->buydate ?></td>
                                             <td><?php echo ($buy->status == 0)?'<font color="red">未结束</font>':'已入库' ?></td>
-                                            <td><?php echo $row[0]->applynumber ?></td>
+                                            <td><?php echo $buy->applynumber ?></td>
                                             <td><?php echo $buy->remark;  $n++?></td>
                                         </tr>
                                     <?php endforeach;?>
@@ -621,7 +833,148 @@
                         <!-- /widget-content -->
                     </div>
                 <?php endif ?>
-
+                <?php if ($stype == 'sale' && $row[0]->status < 4) :?>
+                    <div class="row">
+                        <div class="span9">
+                            <label class="pull-left">
+                                <a href="javascript:;" class="btn btn-primary" onclick="handle_create_order('<?php echo $row[0]->id ?>')" ><i class="icon-list"> 生成销售单</i></a>
+                            </label>
+                        </div>
+                    </div>
+                <?php endif ?>
+                <?php if ($stype == 'apply' && $row[0]->status < 4) : ?>
+                    <div class="row">
+                        <div class="span8">
+                            <label class="pull-right">
+                                <ul class="nav nav-pills">
+                                    <input style="margin-top:3px; margin-right:5px; margin-left:30px" type="text" name="barcode"  id="barcode" value="" placeholder="请输入条形码">
+                                    <a href="javascript:;" class="btn btn-primary">添加商品</a>
+                                </ul>
+                            </label>
+                        </div>
+                    </div>
+                <?php endif ?>
+                <div class="widget widget-table">
+                    <div class="widget-header">
+                        <i class="icon-th-list"></i>
+                        <h3>订单商品入库情况</h3>
+                    </div>
+                    <!-- /widget-header -->
+                    <div class="widget-content">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all-stock""></th>
+                                <th>序号</th>
+                                <th>缩略图</th>
+                                <th>名称</th>
+                                <th>代码</th>
+                                <th>描述</th>
+                                <th>厂家</th>
+                                <th>条形码</th>
+                                <td>售价</td>
+                                <th>库房</th>
+                                <th>状态</th>
+                                <?php if ($stype == 'apply') : ?>
+                                    <th>操作</th>
+                                <?php endif ?>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php if ($stock): ?>
+                                <?php $num=1; foreach ($stock as $stock_row): ?>
+                                    <tr>
+                                        <?php
+                                            if ($stock_row->statuskey == 3 || $stock_row->statuskey == 4) {
+                                                echo '<td></td>';
+                                            }
+                                            else {
+                                                echo '<td><input type="checkbox" name="checkbox_stock" value="'.$stock_row->id.'"/></td>';
+                                            }
+                                        ?>
+                                        <td><?php echo $num; ?></td>
+                                        <td><a href="javascript:;" data-html="true" data-trigger="hover"
+                                               data-toggle="popover"
+                                               data-content="<img src='<?php echo base_url($stock_row->picpath) ?>' />"
+                                               ><img
+                                                    src="<?php echo base_url($stock_row->picpath) ?>" alt=""
+                                                    class="thumbnail smallImg"/></a></td>
+                                        <td>
+                                            <a href="javascript:;" onclick="show_stock_content('<?php echo $stock_row->id ?>')"><?php echo $stock_row->title ?></a>
+                                        </td>
+                                        <td title="<?php echo $stock_row->code ?>"><?php echo Common::subStr($stock_row->code, 0, 10) ?></td>
+                                        <td title="<?php echo $stock_row->memo ?>"><?php echo Common::subStr($stock_row->memo, 0, 20) ?></td>
+                                        <td><?php echo $stock_row->factoryname ?></td>
+                                        <td><?php echo $stock_row->barcode ?></td>
+                                        <td><?php echo $stock_row->salesprice;$num++; ?></td>
+                                        <td><?php
+                                            foreach ($storehouse as $house) {
+                                                if ($stock_row->storehouseid == $house->id) {
+                                                    echo $house->storehousecode;
+                                                }
+                                            }
+                                            ?>
+                                        </td>
+                                        <td><?php echo $stock_row->statusvalue ?></td>
+                                        <?php if ($stype == 'apply') : ?>
+                                            <?php if ($stock_row->statuskey == 10 && $row[0]->status != 4) : ?>
+                                                    <td><a class="btn btn-mini btn-primary"
+                                                           href="javascript:;" onclick="remove_stock('<?php echo $stock_row->id ?>')">移除</a>
+                                                    </td>
+                                            <?php else :?>
+                                                    <td></td>
+                                            <?php endif ?>
+                                        <?php endif ?>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif;?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /widget-content -->
+                </div>
+                <div class="widget widget-table">
+                    <div class="widget-header">
+                        <i class="icon-th-list"></i>
+                        <h3>订单商品生成销售合同单</h3>
+                    </div>
+                    <!-- /widget-header -->
+                    <div class="widget-content">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th> 销售单编号</th>
+                                <th> 销售日期</th>
+                                <th> 客户名称</th>
+                                <th> 销售者</th>
+                                <th> 总价</th>
+                                <th> 折扣总价</th>
+                                <th> 已付金额</th>
+                                <th> 余额</th>
+                                <th> 销售库房</th>
+                                <th> 状态</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach($sells as $row):?>
+                                <tr>
+                                    <td><?php echo $row->sellnumber ?></td>
+                                    <td><?php echo $row->selldate ?></td>
+                                    <td><?php echo $row->clientname ?></td>
+                                    <td><?php echo $row->checkby ?></td>
+                                    <td><?php echo $row->totalmoney ?></td>
+                                    <td><?php echo $row->discount ?></td>
+                                    <td><?php echo $row->paymoney ?></td>
+                                    <td><?php echo $row->lastmoney ?></td>
+                                    <td><?php echo $row->storehousecode ?></td>
+                                    <td><?php $status=array('0'=>'待审核','2'=>'已审核','3'=>'已配送','6'=>'期货部分配送');echo $status[$row->status] ?></td>
+                                </tr>
+                            <?php endforeach;?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /widget-content -->
+                </div>
             </div>
             <!-- /span9 -->
         </div>
@@ -685,21 +1038,21 @@
                 <th colspan="7">
                     <table border="0" cellspacing="0" cellpadding="0" width="100%">
                         <tr align="center">
-                            <td style="text-align: right; width: 200px;"><img src='<?php echo base_url('public/img/logo.jpg') ?>' style="width: 60px;"></td>
-                            <td style="text-align:left; font-size: 20px;padding-bottom: 5px;padding-top: 10px">&nbsp;&nbsp;北京丰意德工贸有限公司销售合同</td>
+                            <td style="text-align: right; width: 150px;"><img src='<?php echo base_url('public/img/logo.jpg') ?>' style="width: 90px;"></td>
+                            <td style="text-align:left; font-size: 26px;padding-bottom: 5px;padding-top: 0px">&nbsp;&nbsp;北京丰意德工贸有限公司销售合同</td>
                         </tr>
                         <tr align="center">
-                            <td colspan="2" style="font-size: 10px;padding-bottom: 20px;padding-top: 10px">(期&nbsp;&nbsp;&nbsp;&nbsp;货)</td>
+                            <td colspan="2" style="font-size: 14px;padding-bottom: 10px;padding-top: 0px">(期&nbsp;&nbsp;&nbsp;&nbsp;货)</td>
                         </tr>
                     </table>
                     <table border="0" cellspacing="0" cellpadding="0" width="100%" class="print_font">
                         <tr>
 <!--                            <td style="width: 40%"></td>-->
-                            <td colspan="2" style="text-align: right">合同编号：<span style="font-size: 18px;color: red;"><?php echo $row[0]->applynumber;?></span></td>
+                            <td colspan="2" style="font-size:14px;text-align: right">合同编号：<span style="font-size: 20px;color: red;"><?php echo $row[0]->applynumber;?></span></td>
                         </tr>
                         <tr>
-                            <td>一.&nbsp;&nbsp;买方决定购买卖方提供的如下</td>
-                            <td style="text-align: right">销售店：<?php echo $row[0]->storehousecode ?> 签订日期：<?php echo date("Y-m-d"); ?></td>
+                            <td style="font-size: 14px;">一.&nbsp;&nbsp;买方决定购买卖方提供的如下</td>
+                            <td style="font-size:14px;text-align: right">销售店：<?php echo $row[0]->storehousecode ?> 签订日期：<?php echo $row[0]->applydate; ?></td>
                         </tr>
                     </table>
                 </th>
@@ -735,7 +1088,7 @@
                     </tr>
                 <?php endif ?>
             <?php endfor ?>
-            <tr style="height:30px;border:1px #000 solid;text-align: center">
+            <tr class="content_tr" style="height:30px;border:1px #000 solid;text-align: center">
                 <td style="border:1px #000 solid;"></td>
                 <td style="border:1px #000 solid;">总价(RMB)</td>
                 <td style="border:1px #000 solid;"></td>
@@ -752,7 +1105,7 @@
                     ?>
                 </td>
             </tr>
-            <tr style="height:30px;border:1px #000 solid;text-align: center">
+            <tr class="content_tr" style="height:30px;border:1px #000 solid;text-align: center">
                 <td style="border:1px #000 solid;"></td>
                 <td style="border:1px #000 solid;">折扣价(RMB)</td>
                 <td style="border:1px #000 solid;"></td>

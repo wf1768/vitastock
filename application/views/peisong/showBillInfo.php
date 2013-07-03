@@ -15,29 +15,56 @@
           return false;
       })
     });
-$(document).ready(function(){
-	//全选删除
-    $("#select-all").click(function(){
-        if($(this).attr("checked")){
-       	    $(".dochecksend").attr("checked",true)
-        }else{
-        	$(".dochecksend").attr("checked",false)
+    //结束销售单
+    function isover(id) {
+        if (id == '') {
+            return;
         }
+
+        bootbox.confirm('确定要［结束配送］吗？<br /> <span style="color: red">注意：销售商品如果有需要配送时，系统自动判断是否全部配送完毕。当销售商品全部为［自提］时，才用［结束配送］。结束配送后，将不能再对商品进行配送。</span> ', function(result) {
+            if(result){
+                $.ajax({
+                    type: "get",
+                    data: "id=" + id,
+                    url: "<?php echo site_url('peisong/update_peisong_over')?>",
+                    success: function (data) {
+                        if (data) {
+                            window.location.reload();
+                        }
+                        else {
+                            openalert("结束配送出错，请重新尝试或与管理员联系。");
+                        }
+                    },
+                    error: function () {
+                        openalert("执行操作出错，请重新尝试或与管理员联系。");
+                    }
+                });
+            }
+        })
+    }
+    $(document).ready(function(){
+        //全选删除
+        $("#select-all").click(function(){
+            if($(this).attr("checked")){
+                $(".dochecksend").attr("checked",true)
+            }else{
+                $(".dochecksend").attr("checked",false)
+            }
+        });
+        //删除商品
+        $("#dopeisong").click(function(){
+         if( $(".dochecksend").filter(":checked").length==0){
+            openalert("当前没有产品被选中"); return false;
+         }
+         var msg='确定配送选中的产品吗?';
+         bootbox.confirm(msg, function(result) {
+             if(result){
+                $("#dosends").submit();
+             }
+         });
+         return false;
+        });
     });
-    //删除商品  
-    $("#dopeisong").click(function(){
-   	 if( $(".dochecksend").filter(":checked").length==0){
-   		openalert("当前没有产品被选中"); return false;
-     }
-   	 var msg='确定配送选中的产品吗?';
-   	 bootbox.confirm(msg, function(result) {
-       	 if(result){
-       		$("#dosends").submit();
-       	 } 
-     }); 
-     return false;
-    });
-});
 </script>
 <!-- Modal -->
 <div id="content">
@@ -123,12 +150,22 @@ $(document).ready(function(){
                                                     <td colspan="3"><?php echo $sell->remark;?> </td>
                                                 </tr>
                                             </table>
+                                            <div class="alert alert-info">
+                                                <button data-dismiss="alert" class="close" type="button">×</button>
+                                                商品配送说明：<br />
+                                                1、销售商品可以多次配送，生成多个配送单。<br />
+                                                2、自提的商品不能配送。如果仍有商品需要配送，销售单状态为［未配送］。当配送商品都配送完毕。销售单状态自动更改为［已配送］，销售单结束。<br />
+                                                3、当全部商品都为［自提］时，需要手动点击［结束配送］按钮，将销售单的状态更改为［已配送］。
+                                            </div>
                                            <div class="row">
                                                 <div class="span8">
                                                     <label class="pull-left">
                                                         <ul class="nav nav-pills">
-                                                          <?php if(!isset($_GET['type'])):?>
-                                                            <li class="active"><a id="dopeisong" href="">配送选中商品</a></li>
+<!--                                                          --><?php //if(!isset($_GET['type'])):?>
+                                                            <?php if($sell->status == 2):?>
+                                                                <a href="javascript:;" id="dopeisong" class="btn btn-primary">配送选中商品</a>
+                                                                <a href="javascript:;" onclick="isover('<?php echo $sell->id;?>')" class="btn btn-primary">结束配送</a>
+<!--                                                            <li class="active"><a id="dopeisong" href="">配送选中商品</a></li>-->
                                                            <?php endif;?>
                                                         </ul>
                                                     </label>
@@ -143,36 +180,34 @@ $(document).ready(function(){
                                                     <th><input id="select-all" type="checkbox" "=""></th>
                                                     <th>名称</th>
                                                     <th>代码</th>
-<!--                                                    <th>描述</th>-->
+                                                    <th>描述</th>
                                                     <th>厂家</th>
-<!--                                                    <th>品牌</th>-->
-<!--                                                    <th>类别</th>-->
                                                     <th>颜色</th>
                                                     <th>条形码</th>
                                                     <th>售价</th>
                                                     <th>库房</th>
                                                     <th>状态</th>
+                                                    <th>配送</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php $num=1; if(isset($list)) foreach($list as $row):?>
                                                     <tr id="s<?php echo $row->id ?>">
                                                         <td>
-                                                        <?php if($row->issend==0):?>
+                                                        <?php if($row->issend==0 && $row->sendtype == 0):?>
                                                            <input type="checkbox" class="dochecksend" value="<?php echo $row->id ?>" name="chkitem[]">
                                                         <?php endif;?>
                                                         </td>
                                                         <td><?php echo $row->title ?></td>
-                                                        <td><?php echo $row->code ?></td>
-                                                        <!--<td><?php echo $row->memo ?></td>
-                                                        --><td><?php echo $row->factoryname ?></td>
-<!--                                                        <td>--><?php //echo $row->brandname ?><!--</td>-->
-<!--                                                        <td>--><?php //echo $row->typename ?><!--</td>-->
+                                                        <td title="<?php echo $row->code ?>"><?php echo Common::subStr($row->code, 0, 10) ?></td>
+                                                        <td title="<?php echo $row->memo ?>"><?php echo Common::subStr($row->memo, 0, 20) ?></td>
+                                                        <td><?php echo $row->factoryname ?></td>
                                                         <td><?php echo $row->color ?></td>
                                                         <td><?php echo $row->barcode ?></td>
                                                         <td><?php echo $row->salesprice ?></td>
                                                         <td><?php echo peisong::getStorehouse($row->storehouseid); ?></td>
                                                         <td><?php echo $row->statusvalue;$num++ ?></td>
+                                                        <td><?php echo $row->sendtype ? '自提' : '配送' ?></td>
                                                     </tr>
                                                     <?php endforeach;?>
                                                 </tbody>

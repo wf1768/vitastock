@@ -406,6 +406,22 @@
                                                 </tr>
                                             </table>
                                             <?php endif ?>
+                                            <?php if ($row[0]->frombuy == 3) :?>
+                                                <div class="alert alert-info">
+                                                    <button data-dismiss="alert" class="close" type="button">×</button>
+                                                    当前入库商品是由期货订货办理入库，商品在办理入库后，商品的状态将为［已销售］，请提醒销售人员，在期货订单里自主生成销售合同单，经财务审核后，直接办理送货。
+                                                </div>
+<!--                                                <form id="apply_order" method="post" action="--><?php //echo site_url('storehouse_in/create_order') ?><!--">-->
+<!--                                                    <input type="hidden" id="stocks" name="stocks" value="">-->
+<!--                                                    <div class="row">-->
+<!--                                                        <div class="span8">-->
+<!--                                                            <label class="pull-left">-->
+<!--                                                                <a href="javascript:;" class="btn btn-primary" onclick="handle_create_order('--><?php //echo $row[0]->id ?><!--')" ><i class="icon-list"> 生成销售单</i></a>-->
+<!--                                                            </label>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                </form>-->
+                                            <?php endif ?>
                                             <?php if ($row[0]->instatus == 0) : ?>
                                             <form id="multi_barcode_form" method="post" action="<?php echo site_url('stock/multi_barcode') ?>">
 <!--                                                <input type="hidden" id="templet_type" name="templet_type" value="storehouse_in">-->
@@ -485,22 +501,6 @@
                                                 <?php endif;?>
                                                 </tbody>
                                             </table>
-                                            <?php if ($row[0]->frombuy == 3) :?>
-                                            <div class="alert alert-info">
-                                                <button data-dismiss="alert" class="close" type="button">×</button>
-                                                当前入库商品是由期货订货办理入库，商品在办理入库后，可以直接生成现货销售单，经财务审核后，直接办理送货。
-                                            </div>
-                                            <form id="apply_order" method="post" action="<?php echo site_url('storehouse_in/create_order') ?>">
-                                                <input type="hidden" id="stocks" name="stocks" value="">
-                                                <div class="row">
-                                                    <div class="span8">
-                                                        <label class="pull-left">
-                                                            <a href="javascript:;" class="btn btn-primary" onclick="handle_create_order('<?php echo $row[0]->id ?>')" ><i class="icon-list"> 生成销售单</i></a>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                            <?php endif ?>
                                             <table class="table table-striped table-bordered">
                                                 <thead>
                                                 <tr>

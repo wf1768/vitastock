@@ -55,7 +55,7 @@ class Main extends Stock__Controller {
 		for ($i = 12; $i > -1; $i--) {
 			$times = mktime(0, 0, 0, date("m") - $i, date("d"), date("Y"));
 			$data = date("Y-m", $times);
-			$sql = 'SELECT count(*) count FROM `e_sell` s ,e_sell_content c where s.id=c.sellid  and s.createtime  like "' . $data . '%"';
+			$sql = 'SELECT count(*) count FROM `e_sell` s ,e_sell_content c where s.id=c.sellid  and s.status != 1 and s.createtime  like "' . $data . '%"';
 			$res = $this->db->query($sql)->result();
 			$ydata[] = intval($res[0]->count);
 			$xdata[] = date("y/m", $times);

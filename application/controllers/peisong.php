@@ -158,21 +158,25 @@ class peisong  extends  Stock__Controller{
 				//更新库房的产品状态
 				$this->dataUpdate($this->stock_model,array("id"=>$val,"statuskey"=>4,"statusvalue"=>'已配送'),false);
 			}
+            //更改销售单状态
+
+
 			//更新订单状态
-			//判断是否订单的所有的产品都配送了
+			//判断是否订单的所有的产品都配送了(原期货变为一个销售单时代码屏蔽)
 			$ishave=$this->sellcont_model->getOneByWhere(array("sellid"=>trim($_POST['sellid']),"issend"=>0));
 			if(!$ishave){ //已经完全配送完成了
 				//查出订单信息
 				$billinfo=$this->sell_model->getOneByWhere(array("id"=>trim($_POST['sellid'])));
-				if($billinfo->issell==1){ //现货销售
-					$this->dataUpdate($this->sell_model,array("id"=>trim($_POST['sellid']),"status"=>3),false);
-				}else{ //期货销售
-					if($billinfo->isall==0){ //期货未全部成销售商品
-						$this->dataUpdate($this->sell_model,array("id"=>trim($_POST['sellid']),"status"=>6),false);
-					}else{ //期货全部成销售商品
-						$this->dataUpdate($this->sell_model,array("id"=>trim($_POST['sellid']),"status"=>3),false);
-					}
-				}
+                $this->dataUpdate($this->sell_model,array("id"=>trim($_POST['sellid']),"status"=>3),false);
+//				if($billinfo->issell==1){ //现货销售
+//					$this->dataUpdate($this->sell_model,array("id"=>trim($_POST['sellid']),"status"=>3),false);
+//				}else{ //期货销售
+//					if($billinfo->isall==0){ //期货未全部成销售商品
+//						$this->dataUpdate($this->sell_model,array("id"=>trim($_POST['sellid']),"status"=>6),false);
+//					}else{ //期货全部成销售商品
+//						$this->dataUpdate($this->sell_model,array("id"=>trim($_POST['sellid']),"status"=>3),false);
+//					}
+//				}
 			}
 		}
 		$this->success("操作已成功",site_url("peisong/showSendBillInfo?id=".$sendid));
@@ -202,6 +206,23 @@ class peisong  extends  Stock__Controller{
 		$datalist = array_merge($this->_data, $info);
 		$this->load->view("peisong/showSendBillInfo", $datalist);
 	}
+
+    public function update_peisong_over() {
+
+        $id = trim($_GET['id']);
+        !$id && $this->error("错误调用");
+        $result = false;
+
+        $update_sell = array(
+            'id' => $id,
+            'status' => 3
+        );
+        $num = $this->dataUpdate($this->sell_model,$update_sell,false);
+        if ($num > 0) {
+            $result = true;
+        }
+        $this->output->append_output($result);
+    }
 
     /*
      * 获取商品的库房

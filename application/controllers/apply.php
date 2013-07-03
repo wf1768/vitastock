@@ -54,6 +54,7 @@ class apply extends Stock__Controller {
         $this->load->model('brand_model');
         $this->load->model('commodityType_model');
 
+        $this->load->model('stock_model');
 
 		$this->load->library('auth_lib');
 
@@ -64,9 +65,10 @@ class apply extends Stock__Controller {
          * sale         销售的订货模块
          * financial    财务的订货模块
          */
-        $stype = $_GET['stype'];
+        $stype = isset($_GET['stype']) ? $_GET['stype'] : '';
 
 
+        $oper = false;
 		/**
          * 在继承的自定义父类，获取系统配置。
          * 判断当前的stype 引导到不同菜单模块
@@ -221,6 +223,23 @@ class apply extends Stock__Controller {
 //        $this->output->append_output($result);
     }
 
+    //ajax方式，显示入库商品详细
+    public function show_stock_content() {
+        $result = false;
+        $id = $this->input->get('id') ? $this->input->get('id') : '';
+
+        if (empty($id)) {
+            $this->output->append_output($result);
+            return;
+        }
+        $row = $this->stock_model->getOne($id);
+
+        //获取库房
+        $storehouse = $this->storehouse_model->getOne($row[0]->storehouseid);
+        $row[0]->storehouse = $storehouse[0]->storehousecode;
+        echo json_encode($row);
+    }
+
 	/**
 	 * 保存订单
 	 */
@@ -368,11 +387,93 @@ class apply extends Stock__Controller {
 			$this->dataDelete($this->apply_content_model,array('applyid'=>$id),'applyid',false);
 			//删除订单处理意见
 			$this->dataDelete($this->apply_deal_model,array('applyid'=>$id),'applyid',false);
+            //TODO 删除订单与入库商品的关联
+            $this->load->model('apply_stock_model');
+            $this->dataDelete($this->apply_stock_model,array('applyid'=>$id),'applyid',false);
 			//删除订单
 			$result = $this->dataDelete($this->apply_model,array('id'=>$id),'id',false);
 		}
 		$this->output->append_output($result);
 	}
+
+    /**
+     * 移除入库商品与期货订单的关联。并将商品状态修改为［在库］
+     */
+    public function remove_stock() {
+        $result = false;
+        $id = $_POST['id'];
+        !$id && $this->error("错误调用");
+
+        //删除订单与商品的关联
+        $this->load->model('apply_stock_model');
+        $this->dataDelete($this->apply_stock_model,array('stockid'=>$id),'stockid',false);
+
+        //修改商品状态
+        $update_stock = array(
+            'id' => $id,
+            'statuskey' =>  1,
+            'statusvalue' =>    '在库'
+        );
+        $num = $this->dataUpdate($this->stock_model,$update_stock,false);
+
+        if ($num > 0) {
+            $result = true;
+        }
+
+        $this->output->append_output($result);
+    }
+
+    public function add_stock() {
+        $result = false;
+        $barcode = $_POST['barcode'];
+        $applyid = $_POST['applyid'];
+        !$barcode && $this->error("错误调用");
+
+        //获取barcode的商品对象
+        $stock = $this->stock_model->getOneByWhere(array('barcode'=>$barcode));
+
+        if (!$stock) {
+            $this->output->append_output($result);
+            return;
+        }
+
+        //判断商品是否已经在与期货订单关联。
+        $this->load->model('apply_stock_model');
+        $row = $this->apply_stock_model->getOneByWhere(array('stockid'=>$stock->id,'applyid'=>$applyid));
+
+        if ($row) {
+            $this->output->append_output($result);
+            return;
+        }
+
+        if ($stock->statuskey != 1) {
+            $this->output->append_output($result);
+            return;
+        }
+
+        //将商品与期货订单关联
+        $insert_apply_stock = array(
+            'applyid' => $applyid,
+            'stockid' => $stock->id
+        );
+
+
+        $this->dataInsert($this->apply_stock_model,$insert_apply_stock,false);
+
+        //修改商品状态为10 期货待销售
+        $update_stock = array(
+            'id' => $stock->id,
+            'statuskey' =>  10,
+            'statusvalue' => '期货待销售'
+        );
+        $num = $this->dataUpdate($this->stock_model,$update_stock,false);
+
+        if ($num > 0) {
+            $result = true;
+        }
+
+        $this->output->append_output($result);
+    }
 
 	/**
 	 * 显示订单
@@ -403,6 +504,16 @@ class apply extends Stock__Controller {
 		$buys = $this->b_buy_model->getAllByWhere(array('applyid'=>$query[0]->id));;
 		$this->_data['buys'] = $buys;
 
+        //获取订单生成的销售合同单
+        $this->load->model('sell_model');
+        $sells = $this->sell_model->getAllByWhere(array('applyid'=>$id));
+        $this->_data['sells'] = $sells;
+
+        //获取当前期货订单的审核意见
+        $this->load->model('finance_check_model');
+        $finance_check = $this->finance_check_model->getAllByWhere(array('sellid'=>$id),array(),array('financetime'=>'asc'));
+        $this->_data['finance_check'] = $finance_check;
+
 		//获取订单商品信息
 		$apply_content = array();
 		if (!empty($id)) {
@@ -417,8 +528,20 @@ class apply extends Stock__Controller {
 		}
 		$this->_data['apply_deal'] = $apply_deal;
 
-		//获取订单处理进度状态码
-//		$this->_data['apply_status'] = $this->apply_status_model->getAllByWhere(array(),array(),array('skey' => 'asc'));
+        //获取订单的商品，入库后的真实商品
+        $this->load->model('apply_stock_model');
+        $apply_stock = $this->apply_stock_model->getAllByWhere(array('applyid'=>$id));
+        $stock = false;
+        if ($apply_stock) {
+            $ids = Common::array_flatten($apply_stock, 'stockid');
+            $this->db->where_in('id',$ids);
+            $stock = $this->stock_model->getAllByWhere();
+        }
+        $this->_data['stock'] = $stock;
+
+        $storehouse = $this->storehouse_model->getAllByWhere();
+        $this->_data['storehouse'] = $storehouse;
+
 
         //获取商品处理进度状态码
         $this->_data['apply_content_status'] = $this->apply_content_status_model->getAllByWhere(array(),array(),array('skey' => 'asc'));
@@ -674,5 +797,63 @@ class apply extends Stock__Controller {
             'remark'                =>  $this->input->post('remark',TRUE),
 		);
 	}
+
+    //期货商品创建销售合同单
+    public function cteate_sell() {
+        $this->_data = $this->get_stock_config('0','25');
+        $this->_data['page_title'] =  '销售期货申请';
+        $this->_data['fun_path'] = "apply?stype=sale";
+        $oper = $this->auth_lib->role_fun_operate('3');
+        $this->_data['oper'] = $oper;
+        //获取期货订单id
+        $id = trim($_GET['id']);
+        $contentid = trim($_GET['contentid']);
+        !$id && $this->error("错误调用");
+
+        //获取订单信息
+        $apply = $this->apply_model->getOne($id);
+        $this->_data['apply'] = $apply;
+
+        date_default_timezone_set('PRC');
+        $this->_data['storehose']=$this->storehouse_model->getAllByWhere();
+        $this->_data['sellnumber']= date("Ymd-His") . '-' . rand(100,999);
+
+        //获取订单对应的入库销售商品
+        $this->load->model('apply_stock_model');
+        $apply_stock = explode(',',$contentid);
+//        $apply_stock = $this->apply_stock_model->getAllByWhere(array (
+//            "applyid" => $id
+//        ), array (
+//            'stockid'
+//        ));
+        //查询具体产品信息
+        foreach ($apply_stock as $val) {
+            $product[] = $this->stock_model->getOneByWhere(array (
+                "id" => $val
+            ));
+        }
+
+        foreach ($product as $key => $val) {
+            $product[$key]->storehouse = $this->getStore($val->storehouseid);
+        }
+
+        isset ($product) && $data['list'] = $product;
+        $list= array_merge($this->_data,$data);
+        $this->load->view("buy/apply_create_sell",$list);
+    }
+
+    /*
+	 * 获得所在仓库
+	 */
+    public function getStore($storeid) {
+        if (!$storeid)
+            return '未设定';
+        $info = $this->storehouse_model->getOneByWhere(array (
+            "id" => $storeid
+        ), array (
+            'storehousecode'
+        ));
+        return $info->storehousecode;
+    }
 
 }

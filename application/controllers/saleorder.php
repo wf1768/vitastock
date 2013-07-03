@@ -179,10 +179,26 @@ class saleorder extends Stock__Controller {
 					$error = true;
 					break;
 				} else { //重置产品的状态
+                    //判断是否是自提。如果是自提的。将商品的状态修改为已配送
+                    $stock = $this->stock_model->getOne($val);
+                    $statuskey = 3;
+                    $statusvalue = '已销售';
+                    if ($stock[0]->sendtype == 1) {
+                        $statuskey = 4;
+                        $statusvalue = '已配送';
+
+                        //更改自提的商品的销售单与商品关联表的商品状态issend为1
+                        $update_sellcont = array(
+                            'id' => $res,
+                            'issend' => 1
+                        );
+                        $this->dataUpdate($this->sellcont_model,$update_sellcont,false);
+                    }
 					$upddata['id'] = $val;
-					$upddata['statuskey'] = 3;
-					$upddata['statusvalue'] = '已销售';
+					$upddata['statuskey'] = $statuskey;
+					$upddata['statusvalue'] = $statusvalue;
 					$this->dataUpdate($this->stock_model, $upddata, false);
+
 				}
 			}
 		}
@@ -212,6 +228,12 @@ class saleorder extends Stock__Controller {
         $this->load->model('send_model');
         $sends = $this->send_model->getAllBywhere(array('sellid'=>$id),array(),array('senddate'=>'asc'));
         $this->_data['sends'] = $sends;
+
+        //获取当前销售单的审核意见
+        $this->load->model('finance_check_model');
+        $finance_check = $this->finance_check_model->getAllByWhere(array('sellid'=>$id),array(),array('financetime'=>'asc'));
+        $this->_data['finance_check'] = $finance_check;
+
 		//查询关联的产品
 		$prolist = $this->sellcont_model->getAllByWhere(array (
 			"sellid" => $id
@@ -379,6 +401,11 @@ class saleorder extends Stock__Controller {
 		$this->_data['page_title'] =  '财务审核';
 		$this->_data['fun_path'] = "saleorder/cwCheck?type=2";
 		$order = array ("createtime" => "desc");
+
+        $this->load->model('storehouse_model');
+        $storehouse = $this->storehouse_model->getAllByWhere();
+        $this->_data['storehouse'] = $storehouse;
+
 		if(isset($_GET['type'])){
 			if($_GET['type']==0){
 //				$otherwehre = "status !=1 and status != 3";
@@ -393,7 +420,7 @@ class saleorder extends Stock__Controller {
 			$otherwehre = array ("status" => '0');
 		}
         $this->_data['type'] = $_GET['type'];
-		$this->dataList("saleorder/cwCheck", $this->sell_model, $where = array ('sellnumber'), $like = array (), $order, $this->_data, $otherwehre);
+		$this->dataList("saleorder/cwCheck", $this->sell_model, $where = array ('storehouseid'), $like = array ('sellnumber','clientname'), $order, $this->_data, $otherwehre);
 	}
 	/*
 	 * 执行财务审核

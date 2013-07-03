@@ -93,15 +93,15 @@
                                                         <td><input type="text" value="0" id="totalmoney" name="totalmoney"  required  onkeypress="return isfloat(event)"></td>
                                                         <td>折扣总价(RMB)</td>
                                                         <td><input type="text" value="0"
-                                                                   onkeypress="return isfloat(event)" name="discount"
+                                                                   onkeypress="return isfloat(event)" onblur="get_lastmoney()" id="discount" name="discount" onkeypress="return isfloat(event)"
                                                                    required></td>
                                                     </tr>
                                                     <tr>
                                                         <td>已付金额(RMB)</td>
-                                                        <td><input type="text" value="0"
-                                                                   name="paymoney" required></td>
+                                                        <td><input type="text" value="0" onblur="get_lastmoney()" onkeypress="return isfloat(event)"
+                                                                   id="paymoney" name="paymoney" required></td>
                                                         <td>未付金额(RMB)</td>
-                                                        <td><input type="text" value="0" name="lastmoney"
+                                                        <td><input type="text" value="0" id="lastmoney" name="lastmoney" onkeypress="return isfloat(event)"
                                                                    required></td>
                                                     </tr>
                                                     <tr>
@@ -112,15 +112,15 @@
                                                     </tr>
                                                     <tr>
                                                         <td>客户名称</td>
-                                                        <td><input type="text" value="" placeholder="请输入客户名称"
+                                                        <td><input type="text" value="" placeholder="请输入客户名称" required
                                                                    name="clientname" ></td>
                                                         <td>客户电话</td>
-                                                        <td><input type="text" value="" placeholder="请输入客户电话"
+                                                        <td><input type="text" value="" placeholder="请输入客户电话" required
                                                                    name="clientphone" ></td>
                                                     </tr>
                                                     <tr>
                                                         <td>客户地址</td>
-                                                        <td colspan="3"><input type="text" value="" class="span5"
+                                                        <td colspan="3"><input type="text" value="" class="span5" required
                                                                                placeholder="请输入客户地址" name="clientadd"
                                                                                ></td>
                                                     </tr>
@@ -144,7 +144,18 @@
                                                                 </li>
                                                             </ul>
                                                         </label>
-
+                                                        <label class="pull-right">
+                                                            <div class="btn-group">
+                                                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="c-666">修改配送方式：</span>
+                                                                    <strong>选择</strong>
+                                                                    <input type="hidden" name="category" value="娱乐">
+                                                                    <b class="caret"></b></a>
+                                                                <ul class="dropdown-menu">
+                                                                    <li><a href="javascript:;" onclick="edit_sendtype('0')"> 配送</a></li>
+                                                                    <li><a href="javascript:;" onclick="edit_sendtype('1')"> 自提</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </label>
                                                     </div>
                                                 </div>
                                                 <table class="table table-striped table-bordered">
@@ -158,14 +169,12 @@
                                                         <th>条形码</th>
                                                         <th>销售价</th>
                                                         <th>所在店</th>
+                                                        <th>配送</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody id="addcontent">
-                                                    <?php foreach ($list as $row): ?>
-                                                        <script>
-                                                            var salesprice = <?php echo $row->salesprice ?>;
-                                                            $('#totalmoney').val(parseFloat($('#totalmoney').val()) + parseFloat(salesprice));
-                                                        </script>
+                                                    <?php $salesprice = 0; foreach ($list as $row): ?>
+                                                        <?php $salesprice = $salesprice + $row->salesprice ?>
                                                         <tr id="s<?php echo $row->id ?>">
                                                             <td><input type="checkbox" name="products"
                                                                        value="<?php echo $row->id ?>"/>
@@ -187,6 +196,7 @@
                                                                        value="<?php echo $row->salesprice ?>"/>
                                                             </td>
                                                             <td><?php echo product::getStorehouse($row->storehouseid) ?></td>
+                                                            <td name="sendtype_<?php echo $row->id ?>"><?php echo $row->sendtype ? '自提' : '配送' ?>
                                                         </tr>
                                                     <?php endforeach;?>
                                                     </tbody>
@@ -233,6 +243,8 @@
     var goods = '';
     $(document).ready(function () {
         $('#totalmoney').val('0');
+        var salesprice = '<?php echo $salesprice ?>';
+        $('#totalmoney').val(parseFloat($('#totalmoney').val()) + parseFloat(salesprice));
         $("#delete_product").click(function () {
             var msg = '确定删除选中数据吗?';
             bootbox.confirm(msg, function (result) {
@@ -250,6 +262,7 @@
                                     $('#totalmoney').val(parseFloat($('#totalmoney').val()) - price);
 
                                     $("#s" + item.value).remove();
+                                    _unset(item.value);
                                 });
                             }
                         });
@@ -289,6 +302,13 @@
                 $.each(data, function (i, item) {
                     if (true) {
                         isHave = _search(item.id);
+                        var sendtype = '';
+                        if (item.sendtype == 1) {
+                            sendtype = '自提';
+                        }
+                        else {
+                            sendtype = '配送';
+                        }
                         if (isHave == false) {
                             listCon.push('<tr id="s' + item.id + '">');
                             listCon.push('<td class="table-textcenter">');
@@ -299,14 +319,12 @@
                             listCon.push('<td class="table-textcenter">' + item.memo + '</td>');
                             listCon.push('<td class="table-textcenter">' + item.factoryname + '</td>');
                             listCon.push('<td class="table-textcenter">' + item.barcode + '</td>');
-//	    	     	         listCon.push('<td class="table-textcenter">'+item.typename+'</td>');
-//	    	     	         listCon.push('<td class="table-textcenter">'+item.color+'</td>');
-//	    	     	         listCon.push('<td class="table-textcenter">'+item.format+'</td>');
                             listCon.push('<td class="table-textcenter">');
                             listCon.push('<input  readonly type="text" placeholder="留空则为原价格"  class="myaddclass span1" name="price[' + item.id + ']" value="' + item.salesprice + '" />');
                             listCon.push('<input required  type="hidden" class="myaddclass" name="price2[' + item.id + ']" value="' + item.salesprice + '" />');
                             listCon.push('</td>');
                             listCon.push('<td class="table-textcenter">'+item.storehouse+'</td>');
+                            listCon.push('<td name="sendtype_'+item.id+'" class="table-textcenter">'+sendtype+'</td>');
                             listCon.push('</tr>');
                             //添加到id 数组 记录
                             idAray.push(item.id);
@@ -329,6 +347,100 @@
         }
     }
 
+    //计算余额
+    function get_lastmoney() {
+        var paymoney = $('#paymoney').val();
+        var lastmoney = $('#lastmoney').val();
+        var discount = $('#discount').val();
+        var totalmoney = $('#totalmoney').val();
+
+        if (parseFloat(discount) > parseFloat(totalmoney)) {
+            openalert('您输入的折扣总价，大于总价，这不符合逻辑');
+            $('#discount').val('0');
+            return;
+        }
+
+        if (paymoney == '') {
+            $('#paymoney').val('0');
+        }
+
+
+        if (parseFloat(paymoney) > parseFloat(discount)) {
+            openalert('您输入的已付金额，大于折扣总价，这不符合逻辑');
+            $('#paymoney').val('0');
+            var paymoney = $('#paymoney').val();
+            $('#lastmoney').val(parseFloat(discount) - parseFloat(paymoney));
+        }
+        else {
+            $('#lastmoney').val(parseFloat(discount) - parseFloat(paymoney));
+        }
+
+    }
+
+    //修改销售商品的配送方式
+    function edit_sendtype(sendtype) {
+        if (sendtype == '') {
+            return;
+        }
+
+        if( $('input[name="products"]').filter(":checked").length==0){
+            openalert("请选择要修改配送方式的销售商品。");
+            return false;
+        }
+        if (sendtype == '1') {
+            var typecode = '自提';
+            var msg='确定修改选中数据配送方式为［自提］吗?<br /> <span style="color: red">注意：销售商品为自提，表示商品客户自己取货，在配送环节，将不再配送。</span> ';
+        }
+        else {
+            var typecode = '配送';
+            var msg='确定修改选中数据配送方式为需要［配送］吗?';
+        }
+        bootbox.confirm(msg, function(result) {
+            if(result){
+                var str = "";
+                $("input[name='products']").each(function () {
+                    if ($(this).attr("checked") == 'checked') {
+                        str += $(this).val() + ",";
+                    }
+                })
+                if (str == "") {
+                    openalert('请选择要修改配送方式的销售商品。');
+                    return;
+                }
+                str = str.substring(0, str.length - 1);
+
+                $.ajax({
+                    type: "post",
+                    data: "ids=" + str + "&sendtype=" + sendtype,
+                    url: "<?php echo site_url('stock/update_stock_sendtype')?>",
+                    success: function (data) {
+                        if (data) {
+                            //如果保存通过，不刷新修改商品配送方式
+                            $("input[name='products']").each(function () {
+                                if ($(this).attr("checked") == 'checked') {
+                                    $("td[name='sendtype_"+$(this).val()+"']").html(typecode);
+                                }
+                            })
+
+                            $("#select-all").attr("checked",false);
+                            $("input[name='products']").each(function () {
+                                $(this).attr("checked",false);
+                            })
+//                            $("td[name='sendtype']").html(typecode);
+                        }
+                        else {
+                            openalert("修改商品配送方式出错，请重新尝试或与管理员联系。");
+                        }
+                    },
+                    error: function () {
+                        openalert("执行操作出错，请重新尝试或与管理员联系。");
+                    }
+                });
+            }
+        });
+
+    }
+
     function _search(key) {
         var m = idAray.length
         for (i = 0; i < m; i++) {
@@ -337,5 +449,14 @@
             }
         }
         return false;
+    }
+
+    function _unset(key){
+        var m=idAray.length
+        for(i=0;i<m;i++){
+            if(idAray[i]==key){
+                idAray[i]='';
+            }
+        }
     }
 </script>

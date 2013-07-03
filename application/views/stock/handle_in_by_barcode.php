@@ -114,7 +114,7 @@
                     barcodes = {};
                 }
                 else {
-                    openalert('调拨单接收商品出错，请重新尝试或与管理员联系。');
+                    openalert('处理商品出错，请重新尝试或与管理员联系。');
                 }
             },
             error: function() {
