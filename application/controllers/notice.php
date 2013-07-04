@@ -51,11 +51,14 @@ class notice  extends  Stock__Controller{
 		$_POST['sendid']=$this->account_info_lib->id;
 		$_POST['sendman']=$this->account_info_lib->accountname;
 		$insid=$this->dataInsert($this->model,$_POST,false);
-		foreach($_POST['fujian'] as $val){
-			$updata['id']=$val;
-			$updata['messageid']=$insid;
-			$this->dataUpdate($this->files_model,$updata,false);
-		}
+        if (isset($_POST['fujian'])) {
+            foreach($_POST['fujian'] as $val){
+                $updata['id']=$val;
+                $updata['messageid']=$insid;
+                $this->dataUpdate($this->files_model,$updata,false);
+            }
+        }
+
 		$this->success('操作已成功',site_url('notice/sDataList'));
 	}
 	public function show(){
