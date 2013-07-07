@@ -1114,7 +1114,13 @@
                 <td style="border:1px #000 solid;">
                     <?php
                     if ($i+1 == ceil(count($apply_content)/10)) {
-                        echo $row[0]->discount .'(折扣率:'.((round($row[0]->discount/$row[0]->totalmoney, 2))*100).'%'.')';
+                        if ($row[0]->totalmoney == 0) {
+                            echo $row[0]->discount .'(折扣率:0%)';
+                        }
+                        else {
+                            echo $row[0]->discount .'(折扣率:'.((round($row[0]->discount/$row[0]->totalmoney, 2))*100).'%'.')';
+                        }
+
                     }
                     else {
                         echo '见尾页';
