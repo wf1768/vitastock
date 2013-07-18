@@ -140,7 +140,7 @@ class stock_find extends Stock__Controller {
         $brands = $this->brand_model->getAllByWhere();
         $this->_data['brand'] = $brands;
 
-        $order = array ();
+        $order = array ('code'=>'asc');
 
         if ($status == 1000) {
             $otherwhere = '';

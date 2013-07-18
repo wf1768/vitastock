@@ -382,7 +382,8 @@
                         <?php if ($this->session->userdata('search_type') == '1') : ?>
 <!--                            <a href="--><?php //echo site_url('stock/stock_pages?houseid='.$storehouseid.$this->session->userdata('super_search')) ?><!--"-->
 <!--                               class="btn">返回</a>-->
-                            <input class="btn btn-primary"  type="button" id="doback" value="返回">
+                            <button type="button" id="doback" class="btn btn-primary"> 返回</button>
+<!--                            <input class="btn btn-primary"  type="button" id="doback" value="返回">-->
                         <?php endif ?>
 
                     </div>

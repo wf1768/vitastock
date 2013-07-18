@@ -180,11 +180,11 @@ class storehouse_in extends Stock__Controller {
         $this->db->where_in('id',$ids);
         //取未入库的（已入库商品与未入库商品分开显示）
 
-        $stock_content = $this->stock_model->getAllByWhere(array('statuskey'=>0));
+        $stock_content = $this->stock_model->getAllByWhere(array('statuskey'=>0),array(),array('code'=>'asc'));
 
         $this->db->where_in('id',$ids);
         $this->db->where('statuskey <>',0);
-        $stock_content_in = $this->stock_model->getAllByWhere();
+        $stock_content_in = $this->stock_model->getAllByWhere(array(),array(),array('code'=>'asc'));
         $this->_data['stock_content'] = $stock_content;
 
         $this->_data['stock_content_in'] = $stock_content_in;

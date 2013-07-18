@@ -87,12 +87,27 @@ class peisong  extends  Stock__Controller{
 		));
 		//查询关联的产品
 		$prolist = $this->sellcont_model->getAllByWhere(array ("sellid" => $id));
-		//查询具体产品信息
-		foreach ($prolist as $val) {
-			$billinfo = $this->stock_model->getOneByWhere(array ("id" => $val->stockid));
-			$billinfo->issend=$val->issend;
-			$product[]=$billinfo;
+
+        //查询具体产品信息
+        foreach ($prolist as $val) {
+            $product_id[] = $val->stockid;
+        }
+        $this->db->where_in('id',$product_id);
+        $product = $this->stock_model->getAllByWhere(array(),array(),array('code'=>'asc'));
+        foreach ($product as $val) {
+            foreach($prolist as $pro) {
+                if ($val->id == $pro->stockid) {
+                    $val->issend = $pro->issend;
+                }
+            }
 		}
+
+//		//查询具体产品信息
+//		foreach ($prolist as $val) {
+//			$billinfo = $this->stock_model->getOneByWhere(array ("id" => $val->stockid));
+//			$billinfo->issend=$val->issend;
+//			$product[]=$billinfo;
+//		}
 		isset ($product) && $info['list'] = $product;
 		//查询对应的配送单
 		$this->_data['sendlist']=$this->send_model->getAllByWhere(array("sellid"=>$id));
@@ -198,11 +213,17 @@ class peisong  extends  Stock__Controller{
 		));
 		//查询关联的产品
 		$prolist = $this->sendContent_model->getAllByWhere(array ("sendid" => $sendid));
-		//查询具体产品信息
-		foreach ($prolist as $val) {
-			$product[] = $this->stock_model->getOneByWhere(array ("id" => $val->stockid));
-		}
-		isset ($product) && $info['list'] = $product;
+        //查询具体产品信息
+        foreach ($prolist as $val) {
+            $product_id[] = $val->stockid;
+        }
+        $this->db->where_in('id',$product_id);
+        $product = $this->stock_model->getAllByWhere(array(),array(),array('code'=>'asc'));
+//		//查询具体产品信息
+//		foreach ($prolist as $val) {
+//			$product[] = $this->stock_model->getOneByWhere(array ("id" => $val->stockid));
+//		}
+        isset ($product) && $info['list'] = $product;
 		$datalist = array_merge($this->_data, $info);
 		$this->load->view("peisong/showSendBillInfo", $datalist);
 	}

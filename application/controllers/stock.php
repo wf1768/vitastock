@@ -74,7 +74,14 @@ class stock extends Stock__Controller {
         $storehouseid = $_REQUEST['houseid'];
         $p = $this->input->get('p') ? $this->input->get('p') : 1;
 //        $status = $this->input->get('status') ? $this->input->get('status') : 1;
-        $status = $_REQUEST['status'];
+//        $status = $_REQUEST['status'] ? $_REQUEST['status'] : 1;
+
+        if (isset ($_REQUEST['status']) && $_REQUEST['status'] != '') {
+            $status = $_REQUEST['status'];
+        }
+        else {
+            $status = 1;
+        }
 
         if (isset ($_REQUEST['barcode']) && $_REQUEST['barcode'] != '') {
             $barcode = $_REQUEST['barcode'];
@@ -179,7 +186,7 @@ class stock extends Stock__Controller {
         $this->_data['storehouseid'] = $storehouseid;
 
         //获取当前库房的库存数据
-        $this->dataList('stock/stock_list',$this->stock_model,array(),array('barcode','title','boxno','color','factorycode','typecode'),array(),$this->_data,$otherwhere);
+        $this->dataList('stock/stock_list',$this->stock_model,array(),array('barcode','title','boxno','color','factorycode','typecode'),array('code'=>'asc'),$this->_data,$otherwhere);
     }
 
     /**
