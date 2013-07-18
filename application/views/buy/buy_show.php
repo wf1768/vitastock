@@ -447,7 +447,7 @@
 <!--                                <th>材质等级</th>-->
                                 <th>数量</th>
 <!--                                <th>箱号</th>-->
-<!--                                <th>件数</th>-->
+                                <th>件数</th>
 <!--                                <th>备注</th>-->
                                 <th>状态</th>
                                 <th>编辑</th>
@@ -485,7 +485,7 @@
 <!--                                        <td>--><?php //echo $product->format ?><!--</td>-->
                                         <td><?php echo $product->number;$num++ ?></td>
 <!--                                        <td>--><?php //echo $product->boxno ?><!--</td>-->
-<!--                                        <td>--><?php //echo $product->itemnumber ?><!--</td>-->
+                                        <td><?php echo $product->itemnumber ?></td>
 <!--                                        <td>--><?php //echo $product->remark ?><!--</td>-->
                                         <td><?php echo ($product->status == 0)? '<font color="red">'.$product->statusvalue.'</font>':$product->statusvalue ?></a></td>
                                         <td><?php echo ($product->status == 0)? '<a href="'.site_url('buy_product/edit?buyid='.$row[0]->id.'&id='.$product->id).'" class="btn btn-small btn-info" onclick="aa('.$product->id.')" ><i class="icon-check">编辑</i></a>':'' ?></td>

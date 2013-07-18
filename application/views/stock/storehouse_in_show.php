@@ -211,41 +211,43 @@
             var itemnumber = $('#itemnumber_' + rowid).val();
 
             if (barcode != '') {
-                barcode_str += '<div class="my_show" style="page-break-after: always;">';
-                barcode_str += '<table>';
-                barcode_str += '<tr>';
-                barcode_str += '<td colspan="2"><img id="barcode-image" src="<?php echo site_url('barcode/buildcode/BCGcode128/') ?>/'+barcode+'"/></td>';
-                barcode_str += '</tr>';
-                barcode_str += '<tr>';
-                barcode_str += '<td style="height: 5px"></td>';
-                barcode_str += '<td></td>';
-                barcode_str += '</tr>';
-                barcode_str += '<tr>';
-                barcode_str += '<td style="width: 2cm">条形码号:</td>';
-                barcode_str += '<td>'+barcode+'</td>';
-                barcode_str += '</tr>';
-                barcode_str += '<tr>';
-                barcode_str += '<td>名称:</td>';
-                barcode_str += '<td>'+title+'</td>';
-                barcode_str += '</tr>';
-                barcode_str += '<tr>';
-                barcode_str += '<td>代码:</td>';
-                barcode_str += '<td>'+code+'</td>';
-                barcode_str += '</tr>';
-                barcode_str += '<tr>';
-                barcode_str += '<td>厂家:</td>';
-                barcode_str += '<td>'+factoryname +'</td>';
-                barcode_str += '</tr>';
-                barcode_str += '<tr>';
-                barcode_str += '<td>件数:</td>';
-                barcode_str += '<td>'+itemnumber+'</td>';
-                barcode_str += '</tr>';
-                barcode_str += '<tr>';
-                barcode_str += '<td>描述:</td>';
-                barcode_str += '<td>'+memo+'</td>';
-                barcode_str += '</tr>';
-                barcode_str += '</table>';
-                barcode_str += '</div>';
+                for (var j=0;j<parseInt(itemnumber);j++) {
+                    barcode_str += '<div class="my_show" style="page-break-after: always;">';
+                    barcode_str += '<table>';
+                    barcode_str += '<tr>';
+                    barcode_str += '<td colspan="2"><img id="barcode-image" src="<?php echo site_url('barcode/buildcode/BCGcode128/') ?>/'+barcode+'"/></td>';
+                    barcode_str += '</tr>';
+                    barcode_str += '<tr>';
+                    barcode_str += '<td style="height: 5px"></td>';
+                    barcode_str += '<td></td>';
+                    barcode_str += '</tr>';
+                    barcode_str += '<tr>';
+                    barcode_str += '<td style="width: 2cm">条形码号:</td>';
+                    barcode_str += '<td>'+barcode+'</td>';
+                    barcode_str += '</tr>';
+                    barcode_str += '<tr>';
+                    barcode_str += '<td>名称:</td>';
+                    barcode_str += '<td>'+title+'</td>';
+                    barcode_str += '</tr>';
+                    barcode_str += '<tr>';
+                    barcode_str += '<td>代码:</td>';
+                    barcode_str += '<td>'+code+'</td>';
+                    barcode_str += '</tr>';
+                    barcode_str += '<tr>';
+                    barcode_str += '<td>厂家:</td>';
+                    barcode_str += '<td>'+factoryname +'</td>';
+                    barcode_str += '</tr>';
+                    barcode_str += '<tr>';
+                    barcode_str += '<td>件数:</td>';
+                    barcode_str += '<td>'+itemnumber+'  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件号: -'+ parseInt(j+1) +'</td>';
+                    barcode_str += '</tr>';
+                    barcode_str += '<tr>';
+                    barcode_str += '<td>描述:</td>';
+                    barcode_str += '<td>'+memo+'</td>';
+                    barcode_str += '</tr>';
+                    barcode_str += '</table>';
+                    barcode_str += '</div>';
+                }
             }
         }
         if (barcode_str != '') {
@@ -460,7 +462,7 @@
 <!--                                                    <th>材质等级</th>-->
                                                     <th>数量</th>
 <!--                                                    <th>箱号</th>-->
-<!--                                                    <th>件数</th>-->
+                                                    <th>件数</th>
                                                     <th>条形码</th>
                                                     <th>状态</th>
                                                 </tr>
@@ -490,6 +492,7 @@
                                                             <td><?php echo $stock->color ?></td>
 <!--                                                            <td>--><?php //echo $stock->format ?><!--</td>-->
                                                             <td><?php echo $stock->number ?></td>
+                                                            <td><?php echo $stock->itemnumber ?></td>
                                                             <td><?php echo $stock->barcode;$num++ ?>
                                                                 <input type="hidden" id="barcode_<?php echo $stock->id ?>" name="barcode_<?php echo $stock->id ?>" value="<?php echo $stock->barcode ?>" >
                                                                 <input type="hidden" id="itemnumber_<?php echo $stock->id ?>" name="itemnumber_<?php echo $stock->id ?>" value="<?php echo $stock->itemnumber ?>" >

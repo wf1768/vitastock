@@ -281,7 +281,7 @@
                                                 <tbody>
                                                 <?php $num=0; if (isset($list)) foreach ($list as $row): ?>
                                                     <tr id="s<?php echo $row->id ?>">
-                                                        <td><?php echo $num ?></td>
+                                                        <td><?php echo $num+1 ?></td>
                                                         <td><?php echo $row->title ?></td>
                                                         <td><?php echo $row->code ?></td>
                                                         <td><?php echo $row->memo ?></td>

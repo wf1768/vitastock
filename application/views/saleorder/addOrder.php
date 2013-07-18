@@ -125,6 +125,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th><input type="checkbox" id="select-all""></th>
+                                                    <th>序号</th>
                                                     <th>名称</th>
                                                     <th>代码</th>
                                                     <th>描述</th>
@@ -408,12 +409,13 @@
                 	 $("#s"+item.value).remove();
                 	 _unset(item.value);
                  });
+                 getNum();
                  if($('input[name="chkitems"]').length==0){
                      //取消全选
                 	 $("#select-all").attr("checked",false);
                  }
              }
-         }); 
+         });
      });
  });
 
@@ -514,6 +516,15 @@
      }
 
  }
+ //计算添加商品的序号
+ function getNum() {
+     alert('dd');
+     var num = 0;
+     $('#addcontent tr').each(function () {
+         $(this).children('td').eq(1).html(num+1);
+         num++;
+     });
+ }
 
 
  function autoAddToBill(){
@@ -535,6 +546,7 @@
     	     	        listCon.push('<td class="table-textcenter">');
     	     	        listCon.push('<input type="checkbox" name="chkitems" value="'+item.id+'"/>');
     	     	        listCon.push('<input type="hidden" name="product[]"  value="'+item.id+'"/></td>');
+                        listCon.push('<td class="table-textcenter">33</td>');
     	     	        listCon.push('<td class="table-textcenter">'+item.title+'</td>');
     	     	        listCon.push('<td class="table-textcenter">'+item.code+'</td>');
     	     	        listCon.push('<td class="table-textcenter">'+item.memo+'</td>');
@@ -547,9 +559,9 @@
                         listCon.push('<td class="table-textcenter">'+item.storehouse+'</td>');
                         listCon.push('<td name="sendtype_'+item.id+'" class="table-textcenter">'+sendtype+'</td>');
     	     	        listCon.push('</tr>');
-    	  	          //添加到id 数组 记录
-    	              idAray.push(item.id);
-                      $('#totalmoney').val(parseFloat($('#totalmoney').val()) + parseFloat(item.salesprice));
+                        //添加到id 数组 记录
+                        idAray.push(item.id);
+                        $('#totalmoney').val(parseFloat($('#totalmoney').val()) + parseFloat(item.salesprice));
     	           }
     	  	  	}
     	      });
@@ -557,6 +569,7 @@
     	  	// $("#addcontent").html('');
     	  	 $(stringCon).appendTo("#addcontent");
          $("#tiaomaadd").val('');
+         getNum();
      });
   }
  //添加商品函数
@@ -577,6 +590,7 @@
      	        listCon.push('<td class="table-textcenter">');
      	        listCon.push('<input type="checkbox" name="chkitems" value="'+item.id+'"/>');
      	        listCon.push('<input type="hidden" name="product[]"  value="'+item.id+'"/></td>');
+                listCon.push('<td class="table-textcenter">22</td>');
      	        listCon.push('<td class="table-textcenter">'+item.title+'</td>');
      	        listCon.push('<td class="table-textcenter">'+item.code+'</td>');
      	        listCon.push('<td class="table-textcenter">'+item.memo+'</td>');
@@ -592,8 +606,8 @@
                 listCon.push('<td class="table-textcenter">'+item.storehouse+'</td>');
                 listCon.push('<td name="sendtype_'+item.id+'" class="table-textcenter">'+sendtype+'</td>');
     	        listCon.push('</tr>');
-  	          //添加到id 数组 记录
-              idAray.push(item.id);
+  	            //添加到id 数组 记录
+                idAray.push(item.id);
                 $('#totalmoney').val(parseFloat($('#totalmoney').val()) + parseFloat(item.salesprice));
            }
   	  	}
@@ -602,6 +616,7 @@
   	 var stringCon=listCon.join('');
   	// $("#addcontent").html('');
   	 $(stringCon).appendTo("#addcontent");
+     getNum();
  }
  function _search(key){
     var m=idAray.length

@@ -99,8 +99,8 @@
                                     <td><?php echo $row->clientname ?></td>
                                     <td><?php echo $row->applyby ?></td>
                                     <td><?php echo strtotime($row->applydate)?$row->applydate:'';  ?></td>
-                                    <td><?php echo $row->checkby ?></td>
-                                    <td><?php echo strtotime($row->commitgetdate)?$row->commitgetdate:'';  ?></td>
+<!--                                    <td>--><?php //echo $row->checkby ?><!--</td>-->
+<!--                                    <td>--><?php //echo strtotime($row->commitgetdate)?$row->commitgetdate:'';  ?><!--</td>-->
                                     <td><?php echo $row->remark ?></td>
                                     <td><?php
                                         if ($row->status == 1) {

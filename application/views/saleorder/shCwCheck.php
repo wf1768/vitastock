@@ -231,7 +231,7 @@
                                             <table class="table table-striped table-bordered">
                                                 <thead>
                                                 <tr>
-
+                                                    <th>序号</th>
                                                     <th>名称</th>
                                                     <th>代码</th>
                                                     <th>描述</th>
@@ -245,9 +245,10 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <?php if (isset($list)) foreach ($list as $row): ?>
+                                                <?php $num = 0; if (isset($list)) foreach ($list as $row): ?>
                                                     <tr id="s<?php echo $row->id ?>">
-
+                                                        <td><?php echo $num+1 ?></td>
+                                                        <td><?php echo $row->title ?></td>
                                                         <td><?php echo $row->title ?></td>
                                                         <td><?php echo $row->code ?></td>
                                                         <td><?php echo $row->memo ?></td>
@@ -257,7 +258,7 @@
                                                         <td><?php echo $row->color ?></td>
                                                         <td><?php echo $row->salesprice?></td>
                                                         <td><?php echo $row->statusvalue ?></td>
-                                                        <td><?php echo $row->sendtype ? '自提' : '配送'; ?></td>
+                                                        <td><?php echo $row->sendtype ? '自提' : '配送'; $num++?></td>
                                                     </tr>
                                                 <?php endforeach;?>
                                                 </tbody>
