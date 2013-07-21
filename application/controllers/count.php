@@ -159,12 +159,12 @@ class count extends Stock__Controller {
 			do {
 				$times = mktime(0, 0, 0, date("m", $stimes) + $p, date("d", $stimes), date("Y", $stimes));
 				$data = date("Y-m", $times);
-				$sql = 'SELECT sum(totalmoney) count FROM `e_sell` s where s.createtime  like "' . $data . '%"';
+				$sql = 'SELECT sum(totalmoney) count FROM `e_sell` s where s.status != 1 and s.createtime  like "' . $data . '%"';
 				$res = $this->db->query($sql)->result();
 				$ydata[] = intval($res[0]->count);
 				$xdata[] = date("y/m", $times);
                 //计算折扣总价
-                $sql_dis = 'SELECT sum(totalmoney) count FROM `e_sell` s where s.status != 1 and s.createtime  like "' . $data . '%"';
+                $sql_dis = 'SELECT sum(discount) count FROM `e_sell` s where s.status != 1 and s.createtime  like "' . $data . '%"';
                 $res_dis = $this->db->query($sql_dis)->result();
                 $discountdata[] = intval($res_dis[0]->count);
 
@@ -178,14 +178,14 @@ class count extends Stock__Controller {
 			for ($i = 12; $i > -1; $i--) {
 				$times = mktime(0, 0, 0, date("m") - $i, date("d"), date("Y"));
 				$data = date("Y-m", $times);
-				$sql = 'SELECT sum(totalmoney) count FROM `e_sell` s  where  s.createtime  like "' . $data . '%"';
+			    $sql = 'SELECT sum(totalmoney) count FROM `e_sell` s  where s.status !=1 and   s.createtime  like "' . $data . '%"';
 				$res = $this->db->query($sql)->result();
 				$ydata[] = intval($res[0]->count);
 				$xdata[] = date("y/m", $times);
 				;
 				$allcount += intval($res[0]->count);
                 //计算折扣总价
-                $sql_dis = 'SELECT sum(totalmoney) count FROM `e_sell` s  where s.status != 1 and  s.createtime  like "' . $data . '%"';
+                $sql_dis = 'SELECT sum(discount) count FROM `e_sell` s  where s.status != 1 and  s.createtime  like "' . $data . '%"';
                 $res_dis = $this->db->query($sql_dis)->result();
                 $discountdata[] = intval($res_dis[0]->count);
                 $all_discount += intval($res_dis[0]->count);

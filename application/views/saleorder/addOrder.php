@@ -518,7 +518,6 @@
  }
  //计算添加商品的序号
  function getNum() {
-     alert('dd');
      var num = 0;
      $('#addcontent tr').each(function () {
          $(this).children('td').eq(1).html(num+1);
