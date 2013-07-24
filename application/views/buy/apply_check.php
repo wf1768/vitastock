@@ -275,11 +275,13 @@
                                                     <th>描述</th>
                                                     <th>厂家</th>
                                                     <th>状态</th>
+                                                    <th>数量</th>
                                                     <th>售价</th>
+                                                    <th>总价</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <?php $num=0; if (isset($list)) foreach ($list as $row): ?>
+                                                <?php $total=0; $num=0; if (isset($list)) foreach ($list as $row): ?>
                                                     <tr id="s<?php echo $row->id ?>">
                                                         <td><?php echo $num+1 ?></td>
                                                         <td><?php echo $row->title ?></td>
@@ -287,9 +289,22 @@
                                                         <td><?php echo $row->memo ?></td>
                                                         <td><?php echo $row->factoryname ?></td>
                                                         <td><?php echo $row->statusvalue ?></td>
-                                                        <td><?php echo $row->salesprice;$num++?></td>
+                                                        <td><?php echo $row->number ?></td>
+                                                        <td><?php echo $row->salesprice;$total += $row->salesprice * $row->number?></td>
+                                                        <td style="color: red"><?php echo $row->number * $row->salesprice;$num++?></td>
                                                     </tr>
                                                 <?php endforeach;?>
+                                                    <tr">
+                                                        <td>总价</td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td style="color: red"><?php echo $total ?></td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
