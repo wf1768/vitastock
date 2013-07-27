@@ -23,11 +23,27 @@
             
             <!-- /widget -->
           <div class="widget widget-table">
-										
+     				<div class="widget-content" style="margin-bottom:10px">
+					
+						<table class="table table-striped table-bordered">
+							<thead>
+								<tr>
+								    <th width="25%">数量总计</th>
+									<th width="25%"><?php echo number_format($tcount,2);?></th>
+									<th width="25%">价值总计(单位： 元)</th>
+									<th width="25%">￥：<?php echo number_format($tmoney,2);?></th>
+								</tr>
+							</thead>
+							
+						</table>
+					</div> <!-- /widget-content -->		
 					<div class="widget-header">
 						<i class="icon-th-list"></i>
 						<h3>统计表</h3>
 					</div> <!-- /widget-header -->
+					
+					
+					
 					
 					<div class="widget-content">
 					
@@ -38,17 +54,20 @@
 								<?php foreach($store as $val):?>
 									<th><?php echo $val->storehousecode?></th>
 							    <?php endforeach;?>
-									<th>总计</th>
+									<th>数量总计</th>
+									<th>价值总计(单位： 元)</th>
 								</tr>
 							</thead>
 							<tbody>
 							<?php if($source) foreach($source as $key=> $val):?>
+							<?php $allmoney=0; if($val['money']) foreach($val['money'] as $sval){$allmoney+=$sval;}?>
 							 <tr>
 							    <td><?php echo $key; $all=0;?></td>
-							    <?php if($val) foreach($val as $sval):?>
+							    <?php if($val['count']) foreach($val['count'] as $sval):?>
 							         <td><?php  echo $sval;$all+=$sval;?></td>
 							    <?php endforeach;?>
 							     <td><?php  echo $all;?></td>
+							     <td>￥：<?php  echo number_format($allmoney,2);?></td>
 							 </tr>
 							<?php endforeach;?>
 							</tbody>

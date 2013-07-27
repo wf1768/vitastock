@@ -130,11 +130,24 @@ class count extends Stock__Controller {
 		$stroelist = $this->storehouse->getAllByWhere();
 		foreach ($res['list'] as $sval) {
 			foreach ($stroelist as $val) {
-				$sql = "select count(*) as count from  s_stock  where statuskey=1 and  title='" . addslashes($sval->title) . "' and storehouseid=" . $val->id;
+				$sql = "select count(*) as count,sum(salesprice) as  totmoney  from  s_stock  where statuskey=1 and  title='" . addslashes($sval->title) . "' and storehouseid=" . $val->id;
 				$dres = $this->db->query($sql)->result();
-				$outdata[$sval->title][] = $dres[0]->count;
+				$outdata[$sval->title]['count'][] = $dres[0]->count;
+				$outdata[$sval->title]['money'][] = $dres[0]->totmoney;
 			}
 		}
+		//总的数据 价值统计
+		if(isset($_GET['tcount']) && isset( $_GET['tmoney'])){
+			$this->_data['tcount'] = $_GET['tcount'];
+			$this->_data['tmoney'] = $_GET['tmoney'];
+		}else{
+			$sql="select count(*) as count,sum(salesprice) as totmoney from s_stock where statuskey=1";//在库 的
+			$dres = $this->db->query($sql)->result();
+			$this->_data['tcount'] =$_GET['tcount'] = $dres[0]->count;
+			$this->_data['tmoney'] =$_GET['tmoney'] = $dres[0]->totmoney;
+		}
+		//加入参数 重新生成  分页信息
+		$this->_list($this->stock_model, array ('title'), $this->_data);
 		unset ($res['list']);
 		$this->_data['source'] = $outdata;
 		$this->_data['store'] = $stroelist;
