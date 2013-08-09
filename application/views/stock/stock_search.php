@@ -124,6 +124,7 @@
                                 <th>数量</th>
                                 <th>颜色</th>
                                 <th>条形码</th>
+                                <th>售价</th>
                                 <th>库房</th>
                                 <th>状态</th>
                             </tr>
@@ -148,6 +149,7 @@
                                         <td><?php echo $row->number ?></td>
                                         <td><?php echo $row->color ?></td>
                                         <td><?php echo $row->barcode ?></td>
+                                        <td><?php echo $row->salesprice ?></td>
                                         <td><?php
                                             foreach ($storehouse as $house) {
                                                 if ($row->storehouseid == $house->id) {

@@ -360,6 +360,7 @@
 <!--                                <th>规格</th>-->
                                 <th>颜色</th>
                                 <th>条形码</th>
+                                <th>售价</th>
                                 <th>库房</th>
                                 <th>状态</th>
                                 <?php if ($oper) : ?>
@@ -395,6 +396,7 @@
 <!--                                        <td>--><?php //echo $row->format ?><!--</td>-->
                                         <td><?php echo $row->color ?></td>
                                         <td><?php echo $row->barcode ?></td>
+                                        <td><?php echo $row->salesprice ?></td>
                                         <td><?php
                                             foreach ($storehouses as $house) {
                                                 if ($row->storehouseid == $house->id) {
