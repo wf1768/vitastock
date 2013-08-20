@@ -464,6 +464,7 @@
 <!--                                                    <th>箱号</th>-->
                                                     <th>件数</th>
                                                     <th>条形码</th>
+                                                    <th>备注</th>
                                                     <th>状态</th>
                                                 </tr>
                                                 </thead>
@@ -497,7 +498,7 @@
                                                                 <input type="hidden" id="barcode_<?php echo $stock->id ?>" name="barcode_<?php echo $stock->id ?>" value="<?php echo $stock->barcode ?>" >
                                                                 <input type="hidden" id="itemnumber_<?php echo $stock->id ?>" name="itemnumber_<?php echo $stock->id ?>" value="<?php echo $stock->itemnumber ?>" >
                                                             </td>
-<!--                                                            <td>--><?php //echo $stock->remark;  ?><!--</td>-->
+                                                            <td><?php echo $stock->remark;  ?></td>
                                                             <td><?php echo ($stock->statuskey == 0)?'<font color="red">'.$stock->statusvalue.'</font>':$stock->statusvalue ?></td>
                                                         </tr>
                                                     <?php endforeach;?>
