@@ -177,7 +177,7 @@
                 $('#memo').html(item.memo);
                 $('#number').html(item.number);
                 $('#salesprice').html(item.salesprice);
-                $('#remark').html(item.remark);
+                $('#remark_content').html(item.remark);
             })
         })
         $('#apply-content-dialog').modal('show');
@@ -468,7 +468,7 @@
             </tr>
             <tr>
                 <td style="vertical-align:middle">备注</td>
-                <td colspan="3" id="remark"></td>
+                <td colspan="3" id="remark_content"></td>
             </tr>
             </tbody>
         </table>
@@ -1042,7 +1042,7 @@
                             <td style="text-align:left; font-size: 26px;padding-bottom: 5px;padding-top: 0px">&nbsp;&nbsp;北京丰意德工贸有限公司销售合同</td>
                         </tr>
                         <tr align="center">
-                            <td colspan="2" style="font-size: 14px;padding-bottom: 10px;padding-top: 0px">(期&nbsp;&nbsp;&nbsp;&nbsp;货)</td>
+                            <td colspan="2" style="font-size: 14px;padding-bottom: 2px;padding-top: 0px">(期&nbsp;&nbsp;&nbsp;&nbsp;货)</td>
                         </tr>
                     </table>
                     <table border="0" cellspacing="0" cellpadding="0" width="100%" class="print_font">
@@ -1060,7 +1060,7 @@
             <tr style="border:1px #000 solid;text-align: center;height: 40px">
                 <th style="border:1px #000 solid;">序号</th>
                 <th style="border:1px #000 solid;">生产厂家</th>
-                <th style="border:1px #000 solid;">产品描述</th>
+                <th style="border:1px #000 solid;">产品名称</th>
                 <th style="border:1px #000 solid;">数量</th>
                 <th style="border:1px #000 solid;">条形码</th>
                 <th style="border:1px #000 solid;">单价(RMB)</th>
@@ -1179,16 +1179,21 @@
             </tr>
             <tr class="tr_height">
                 <td style="width: 15px">十.</td>
+                <td>期货商品详细描述，见期货商品附件。
+                </td>
+            </tr>
+            <tr class="tr_height">
+                <td style="width: 15px">十一.</td>
                 <td>其他约定事项：
                 </td>
             </tr>
             <tr class="tr_height">
-                <td style="width: 30px">十一.</td>
+                <td style="width: 30px">十二.</td>
                 <td>本合同一式贰份，买方执壹份，卖方执壹份。
                 </td>
             </tr>
         </table>
-        <div >
+        <div style="margin:-20px 0px 0px 0px">
             <table border="0" cellspacing="0" cellpadding="0" width="100%" class="foorer_font" >
                 <tr class="tr_height">
                     <td style="width: 60px;line-height:1.5em;padding-top: 30px" >买&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方：</td>
@@ -1223,4 +1228,70 @@
         </div>
     </div>
     <?php endfor ?>
+    <div class="my_show" style="page-break-after: always;">
+        <style>
+            .print_font {
+                font-size: 10px;
+                margin:0px 0px 10px 0px;
+            }
+            .tr_height {
+                height: 20px;
+            }
+            .foorer_font {
+                font-size: 12px;
+                font-weight:blod;
+            }
+
+            .content_tr {}
+
+            .content_tr td {
+                height: 10px;
+                overflow: hidden;
+                font-size: 12px;
+            }
+        </style>
+        <table  cellspacing="0" style="border-collapse: collapse; border-spacing: 0;background-color: transparent;max-width: 100%" cellpadding="0" width="100%" class="print_font">
+            <thead>
+            <tr>
+                <th colspan="7">
+                    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                        <tr align="center">
+                            <td style="text-align: right; width: 150px;"><img src='<?php echo base_url('public/img/logo.jpg') ?>' style="width: 90px;"></td>
+                            <td style="text-align:left; font-size: 26px;padding-bottom: 5px;padding-top: 0px">&nbsp;&nbsp;北京丰意德工贸有限公司销售合同</td>
+                        </tr>
+                        <tr align="center">
+                            <td colspan="2" style="font-size: 14px;padding-bottom: 2px;padding-top: 0px">(期&nbsp;&nbsp;货&nbsp;&nbsp;订&nbsp;&nbsp;单&nbsp;&nbsp;附&nbsp;&nbsp;件)</td>
+                        </tr>
+                    </table>
+                    <table border="0" cellspacing="0" cellpadding="0" width="100%" class="print_font">
+                        <tr>
+                            <!--                            <td style="width: 40%"></td>-->
+                            <td colspan="2" style="font-size:14px;text-align: right">合同编号：<span style="font-size: 20px;color: red;"><?php echo $row[0]->applynumber;?></span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px;">一.&nbsp;&nbsp;买方决定购买卖方提供的如下</td>
+                            <td style="font-size:14px;text-align: right">销售店：<?php echo $row[0]->storehousecode ?> 签订日期：<?php echo $row[0]->applydate; ?></td>
+                        </tr>
+                    </table>
+                </th>
+            </tr>
+            <tr style="border:1px #000 solid;text-align: center;height: 40px">
+                <th style="width:30px;border:1px #000 solid;">序号</th>
+                <th style="width:100px;border:1px #000 solid;">产品名称</th>
+                <th style="border:1px #000 solid;">产品描述</th>
+                <th style="width:30px;border:1px #000 solid;">数量</th>
+            </tr>
+            </thead>
+            <tbody >
+            <?php for ($i=0;$i<count($apply_content);$i++) :?>
+                <tr class="content_tr" style="height:30px;border:1px #000 solid;text-align: center">
+                    <td style="border:1px #000 solid;"><?php echo $i+1; ?></td>
+                    <td style="border:1px #000 solid;"><?php echo $apply_content[$i]->title ?></td>
+                    <td style="border:1px #000 solid;"><?php echo $apply_content[$i]->memo ?></td>
+                    <td style="border:1px #000 solid;"><?php echo $apply_content[$i]->number ?></td>
+                </tr>
+            <?php endfor ?>
+            </tbody>
+        </table>
+    </div>
 </div>

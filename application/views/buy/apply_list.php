@@ -5,14 +5,55 @@
 
 <script>
 
-    function remove_apply() {
-        var str="";
-        $("input[name='checkbox']").each(function(){
-            if($(this).attr("checked") == 'checked'){
-                str+=$(this).val()+",";
+    //处理订单状态
+    function add_apply_deal(applyid,key) {
+        if (applyid == '' || key == '') {
+            openalert('执行操作出错，请重新尝试或与管理员联系。');
+            return;
+        }
+<!--        var stype = '--><?php //echo $stype ?><!--';-->
+//        if (stype == 'financial') {
+//            stype = "确定要审核通过当前订单吗？";
+//        }
+//        else {
+//            stype = "确定要结束订单吗？<br> <font color='red'>注意：结束期货订单将不能在修改，请谨慎操作。</font>";
+//        }
+        var stype = "确定要作废订单吗？<br> <font color='red'>注意：作废期货订单将不能在继续操作，请谨慎操作。</font>";
+        bootbox.confirm(stype, function(result) {
+            if(result){
+                $.ajax({
+                    type:"post",
+                    data: 'applyid='+applyid+'&key='+key,
+                    url:"<?php echo site_url('apply/add_apply_deal')?>",
+                    success: function(data){
+                        if (data) {
+                            window.location.reload();
+                        }
+                        else {
+                            openalert('处理订单出错，请重新尝试或与管理员联系。');
+                        }
+                    },
+                    error: function() {
+                        openalert('执行操作出错，请重新尝试或与管理员联系。');
+                    }
+                });
             }
         })
-        if (str == "") {
+
+    }
+
+    function remove_apply(id) {
+//        var str="";
+//        $("input[name='checkbox']").each(function(){
+//            if($(this).attr("checked") == 'checked'){
+//                str+=$(this).val()+",";
+//            }
+//        })
+//        if (str == "") {
+//            openalert('请选择要删除的期货订单。');
+//            return;
+//        }
+        if (id == "") {
             openalert('请选择要删除的期货订单。');
             return;
         }
@@ -21,11 +62,11 @@
                 "注意：删除期货订单将同时删除包含的商品和处理进度，本操作不可恢复，请谨慎操作。</font> ", function(result) {
             if(result){
 
-                str = str.substring(0,str.length-1);
+//                str = str.substring(0,str.length-1);
 
                 $.ajax({
                     type:"post",
-                    data: "id=" + str,
+                    data: "id=" + id,
                     url:"<?php echo site_url('apply/remove')?>",
                     success: function(data){
                         if (data) {
@@ -140,6 +181,7 @@
                                     <select name="status">
                                         <option value="1" <?php if ($status == 1) echo 'selected' ?>>未结束</option>
                                         <option value="2" <?php if ($status == 2) echo 'selected' ?>>已结束</option>
+                                        <option value="4" <?php if ($status == 4) echo 'selected' ?>>已作废</option>
                                         <option value="3" <?php if ($status == 3) echo 'selected' ?>>全部</option>
 <!--                                        <option value="1" --><?php //if ($status == 1) echo 'selected' ?><!-->待审核</option>-->
 <!--                                        <option value="2" --><?php //if ($status == 2) echo 'selected' ?><!-->已审核</option>-->
@@ -174,7 +216,7 @@
                                 <th>承诺到货日期</th>
                                 <th>备注</th>
                                 <th>状态</th>
-
+                                <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -193,7 +235,8 @@
                                     <td><?php echo strtotime($row->applydate)?$row->applydate:'';  ?></td>
                                     <td><?php echo $row->checkby ?></td>
                                     <td><?php echo strtotime($row->commitgetdate)?$row->commitgetdate:'';  ?></td>
-                                    <td><?php echo $row->remark ?></td>
+                                    <td title="<?php echo $row->remark ?>"><?php echo Common::subStr($row->remark, 0, 6) ?></td>
+<!--                                    <td>--><?php //echo $row->remark ?><!--</td>-->
                                     <td><?php
                                         if ($row->status == 1) {
                                             echo '<font color="red">'.$row->statusvalue.'</font>';
@@ -208,6 +251,19 @@
                                             echo $row->statusvalue;
                                         }
                                         ?>
+                                    </td>
+                                    <td>
+                                    <?php if ($stype == 'sale' and $row->status == 1 and $this->account_info_lib->id == $row->createbyid) : ?>
+                                        <a class="btn btn-mini btn-primary"
+                                           href="<?php echo site_url("apply/edit?id=".$row->id."&stype=sale")?>" >修改</a>
+
+                                    <?php endif ?>
+                                    <?php if ($stype == 'apply' and ($row->status == 1 or $row->status == 2)) : ?>
+                                            <a class="btn btn-mini btn-primary"
+                                               href="javascript:;" onclick="remove_apply('<?php echo $row->id ?>')" >删除</a>
+                                            <a class="btn btn-mini btn-primary"
+                                               href="javascript:;" onclick="add_apply_deal('<?php echo $row->id ?>','5')" >作废</a>
+                                    <?php endif ?>
                                     </td>
                                 </tr>
                                 <?php endforeach;?>

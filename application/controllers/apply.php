@@ -151,10 +151,13 @@ class apply extends Stock__Controller {
         else if ($status == 2) {
             $otherwhere = 'status = 4';
         }
+        else if ($status == 4) {
+            $otherwhere = 'status = 5';
+        }
         else if ($status == 3) {
             $otherwhere = '';
-            unset($order);
-            $order = array('status' => 'asc','createtime'=>'desc');
+//            unset($order);
+//            $order = array('status' => 'asc','createtime'=>'desc');
         }
         else {
             $otherwhere = 'status = 1 or status = 2 or status = 3';
@@ -209,35 +212,36 @@ class apply extends Stock__Controller {
 			$this->insert_apply();
 		}
 	}
-    //ajax方式，显示订单商品详细
-    public function show_apply_content() {
-        $result = false;
-        $id = $this->input->get('id') ? $this->input->get('id') : '';
 
-        if (empty($id)) {
-            $this->output->append_output($result);
-            return;
+    /**
+     * 修改期货订单
+     */
+    public function  edit() {
+        $id = $this->input->get('id') ? $this->input->get('id') : '';
+        //根据期货订单id，获取订单下订单商品。
+        //获取订单商品信息
+		$apply_content = array();
+		if (!empty($id)) {
+            $apply_content = $this->apply_content_model->getAllByWhere(array('applyid'=>$id),array(),array('factoryname'=>'asc'));
         }
-        $row = $this->apply_content_model->getOne($id);
-        echo json_encode($row);
-//        $this->output->append_output($result);
+		$this->_data['apply_content'] = $apply_content;
+
+        $houses = $this->storehouse_model->getAllByWhere();
+        $this->_data['houses'] = $houses;
+
+        $factorys = $this->factory_model->getAllByWhere();
+        $this->_data['factorys'] = $factorys;
+        $brands = $this->brand_model->getAllByWhere();
+        $this->_data['brands'] = $brands;
+        $commodittypes = $this->commodityType_model->getAllByWhere();
+        $this->_data['comtypes'] = $commodittypes;
+
+        $this->dataEdit("buy/apply_edit",$this->apply_model,$this->_data) ;
     }
 
-    //ajax方式，显示入库商品详细
-    public function show_stock_content() {
-        $result = false;
-        $id = $this->input->get('id') ? $this->input->get('id') : '';
-
-        if (empty($id)) {
-            $this->output->append_output($result);
-            return;
-        }
-        $row = $this->stock_model->getOne($id);
-
-        //获取库房
-        $storehouse = $this->storehouse_model->getOne($row[0]->storehouseid);
-        $row[0]->storehouse = $storehouse[0]->storehousecode;
-        echo json_encode($row);
+    public function doupdate() {
+        $this->dataUpdate($this->apply_model,null,false);
+        $this->success(null,site_url().'/apply/pages?status=1&stype=sale');
     }
 
 	/**
@@ -366,6 +370,202 @@ class apply extends Stock__Controller {
 //        $this->success(null,site_url().'/apply/pages?status=1&stype='.$this->_data['stype']);
 		$this->success(null,site_url().'/apply/show?id='.$newid.'&stype='.$this->_data['stype']);
 	}
+
+
+    //ajax方式，显示订单商品详细
+    public function show_apply_content() {
+        $result = false;
+        $id = $this->input->get('id') ? $this->input->get('id') : '';
+
+        if (empty($id)) {
+            $this->output->append_output($result);
+            return;
+        }
+        $row = $this->apply_content_model->getOne($id);
+        echo json_encode($row);
+//        $this->output->append_output($result);
+    }
+
+    //ajax方式，显示入库商品详细
+    public function show_stock_content() {
+        $result = false;
+        $id = $this->input->get('id') ? $this->input->get('id') : '';
+
+        if (empty($id)) {
+            $this->output->append_output($result);
+            return;
+        }
+        $row = $this->stock_model->getOne($id);
+
+        //获取库房
+        $storehouse = $this->storehouse_model->getOne($row[0]->storehouseid);
+        $row[0]->storehouse = $storehouse[0]->storehousecode;
+        echo json_encode($row);
+    }
+
+    /**
+     * 删除期货商品。在订单修改里，物理删除期货商品
+     */
+    public function delete_apply_content() {
+        $result = false;
+        $id = $this->input->post('id') ? $this->input->post('id') : '';
+
+
+        if (empty($id)) {
+            $this->output->append_output($result);
+            return;
+        }
+        $result = $this->dataDelete($this->apply_content_model,array('id'=>$id),'id',false);
+        $this->output->append_output($result);
+    }
+
+    /**
+     * ajax获取期货商品。修改订单时，修改订单商品
+     */
+    public function read_apply_content() {
+        $result = false;
+        $id = $this->input->post('id') ? $this->input->post('id') : '';
+
+
+        if (empty($id)) {
+            $this->output->append_output($result);
+            return;
+        }
+
+        $apply_content = $this->apply_content_model->getOne($id);
+
+        require_once(FCPATH . STOCK_PLUGINS_DIR . '/' . 'JSON.php');
+        $json = new Services_JSON();
+        $row = $json->encode($apply_content);
+
+        $this->output->append_output($row);
+    }
+
+    /**
+     * 修改期货商品。在订单修改里，物理修改保存期货商品
+     */
+    public function edit_save_apply_content() {
+        $result = false;
+        $apply_content = $this->input->post('apply_content_json',TRUE);
+        if ($apply_content) {
+            require_once(FCPATH . STOCK_PLUGINS_DIR . '/' . 'JSON.php');
+            $json = new Services_JSON();
+            $row = $json->decode($apply_content);
+
+            try {
+                $row = (array)$row;
+                $update_row = array();
+                $update_row['id']    = empty($row['id']) ? '' : $row['id'];
+                $update_row['title']  = empty($row['title']) ? '' : $row['title'];
+                $update_row['code']  = empty($row['code']) ? '' : $row['code'];
+                $update_row['factoryid']  = empty($row['factoryid']) ? '' : $row['factoryid'];
+                $update_row['brandid']    = empty($row['brandid']) ? '' : $row['brandid'];
+                $update_row['typeid']     = empty($row['typeid']) ? '' : $row['typeid'];
+                $update_row['color']      = empty($row['color']) ? '' : $row['color'];
+                $update_row['memo']       = empty($row['memo']) ? '' : $row['memo'];
+                $update_row['number']     = empty($row['number']) ? '' : $row['number'];
+                $update_row['salesprice'] = empty($row['salesprice']) ? '' : $row['salesprice'];
+                $update_row['remark']     = empty($row['remark']) ? '' : $row['remark'];
+
+                $factorys = $this->factory_model->getAllByWhere();
+                $this->_data['factorys'] = $factorys;
+                $brands = $this->brand_model->getAllByWhere();
+                $this->_data['brands'] = $brands;
+                $commodittypes = $this->commodityType_model->getAllByWhere();
+                $this->_data['comtypes'] = $commodittypes;
+
+                //获取厂家信息、品牌信息、商品类别信息
+                if ($update_row['factoryid']) {
+                    $factory = $this->factory_model->getOne($update_row['factoryid']);
+                    $update_row['factorycode'] = $factory[0]->factorycode;
+                    $update_row['factoryname'] = $factory[0]->factoryname;
+                }
+                if ($update_row['brandid']) {
+                    $brand = $this->brand_model->getOne($update_row['brandid']);
+                    $update_row['brandcode'] = $brand[0]->brandcode;
+                    $update_row['brandname'] = $brand[0]->brandname;
+                }
+                if ($update_row['typeid']) {
+                    $type = $this->commodityType_model->getOne($update_row['typeid']);
+                    $update_row['typecode'] = $type[0]->typecode;
+                    $update_row['typename'] = $type[0]->typename;
+                }
+
+                $num = $this->dataUpdate($this->apply_content_model,$update_row,false);
+
+                if ($num) {
+                    $result = true;
+                }
+                $this->output->append_output($result);
+            } catch (Exception $e) {
+                $this->output->append_output($result);
+                return;
+            }
+        }
+    }
+
+    /**
+     * 添加期货商品。在订单修改里，物理增加期货商品
+     */
+    public function add_apply_content() {
+        $result = false;
+        $apply_content = $this->input->post('apply_content_json',TRUE);
+        if ($apply_content) {
+            require_once(FCPATH . STOCK_PLUGINS_DIR . '/' . 'JSON.php');
+            $json = new Services_JSON();
+            $row = $json->decode($apply_content);
+
+            try {
+                $row = (array)$row;
+                $insert_row = array();
+                $insert_row['applyid']    = empty($row['applyid']) ? '' : $row['applyid'];
+                $insert_row['title']  = empty($row['title']) ? '' : $row['title'];
+                $insert_row['code']  = empty($row['code']) ? '' : $row['code'];
+                $insert_row['factoryid']  = empty($row['factoryid']) ? '' : $row['factoryid'];
+                $insert_row['brandid']    = empty($row['brandid']) ? '' : $row['brandid'];
+                $insert_row['typeid']     = empty($row['typeid']) ? '' : $row['typeid'];
+                $insert_row['color']      = empty($row['color']) ? '' : $row['color'];
+                $insert_row['memo']       = empty($row['memo']) ? '' : $row['memo'];
+                $insert_row['number']     = empty($row['number']) ? '' : $row['number'];
+                $insert_row['salesprice'] = empty($row['salesprice']) ? '' : $row['salesprice'];
+                $insert_row['remark']     = empty($row['remark']) ? '' : $row['remark'];
+
+                $factorys = $this->factory_model->getAllByWhere();
+                $this->_data['factorys'] = $factorys;
+                $brands = $this->brand_model->getAllByWhere();
+                $this->_data['brands'] = $brands;
+                $commodittypes = $this->commodityType_model->getAllByWhere();
+                $this->_data['comtypes'] = $commodittypes;
+
+                //获取厂家信息、品牌信息、商品类别信息
+                if ($insert_row['factoryid']) {
+                    $factory = $this->factory_model->getOne($insert_row['factoryid']);
+                    $insert_row['factorycode'] = $factory[0]->factorycode;
+                    $insert_row['factoryname'] = $factory[0]->factoryname;
+                }
+                if ($insert_row['brandid']) {
+                    $brand = $this->brand_model->getOne($insert_row['brandid']);
+                    $insert_row['brandcode'] = $brand[0]->brandcode;
+                    $insert_row['brandname'] = $brand[0]->brandname;
+                }
+                if ($insert_row['typeid']) {
+                    $type = $this->commodityType_model->getOne($insert_row['typeid']);
+                    $insert_row['typecode'] = $type[0]->typecode;
+                    $insert_row['typename'] = $type[0]->typename;
+                }
+
+                $tmpid = $this->dataInsert($this->apply_content_model,$insert_row,false);
+
+                if ($tmpid) {
+                    $result = true;
+                }
+                $this->output->append_output($result);
+            } catch (Exception $e) {
+                $this->output->append_output($result);
+                return;
+            }
+        }
+    }
 
 	/**
 	 * 删除期货订单
@@ -575,6 +775,11 @@ class apply extends Stock__Controller {
             $insert_apply_deal['dealstatuskey'] = '4';
             $insert_apply_deal['dealstatusvalue'] = '已结束';
             $insert_apply_deal['remark'] = '期货订单已结束.';
+        }
+        else if ($key == '5') {
+            $insert_apply_deal['dealstatuskey'] = '5';
+            $insert_apply_deal['dealstatusvalue'] = '已作废';
+            $insert_apply_deal['remark'] = '期货订单已作废.';
         }
 
         $tmpid = $this->dataInsert($this->apply_deal_model,$insert_apply_deal,false);

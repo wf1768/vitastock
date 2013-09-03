@@ -34,6 +34,9 @@
                 <a href="" id="clearCart" class="btn btn-primary">
                     <i class="icon-trash">清空购物车</i>
                 </a>
+                <a href="<?php echo site_url("buy_product/export_excel") ?>" id="exportCart" class="btn btn-primary">
+                    <i class="icon-trash">导出购物车到excel</i>
+                </a>
                 <a href="<?php echo site_url("product/creatOrder")?>" class="btn btn-primary">
                     <i class="icon-plus">生成销售单</i>
                 </a>

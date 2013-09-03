@@ -111,7 +111,7 @@ class apply_check extends Stock__Controller {
         $finance_check = $this->finance_check_model->getAllByWhere(array('sellnumber'=>$info['apply']->applynumber),array(),array('financetime'=>'asc'));
         $this->_data['finance_check'] = $finance_check;
         //查询关联的产品
-        $prolist = $this->apply_content_model->getAllByWhere(array ("applyid" => $id));
+        $prolist = $this->apply_content_model->getAllByWhere(array('applyid'=>$id),array(),array('factoryname'=>'asc'));
 //        //查询具体产品信息
 //        foreach ($prolist as $val) {
 //            $product[] = $this->stock_model->getOneByWhere(array ("id" => $val->stockid));

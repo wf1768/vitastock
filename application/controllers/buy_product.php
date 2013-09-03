@@ -407,6 +407,11 @@ class buy_product extends Stock__Controller{
         return $excel_data;
     }
 
+    public function export_excel() {
+        $this->load->library('excel_lib');
+        $this->excel_lib->export_excel();
+    }
+
     /**
      * 上传商品图片
      */
