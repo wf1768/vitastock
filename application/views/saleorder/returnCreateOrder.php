@@ -47,6 +47,8 @@
                                                 <input type="hidden" name="createby"
                                                        value="<?php echo $this->account_info_lib->accountname ?>"
                                                        readonly>
+                                                <input type="hidden" name="applyid"
+                                                       value="<?php echo $sell[0]->applyid ?>" >
                                                 <table class="table table-bordered" width="100%">
                                                     <tr>
                                                         <td>销售单编号</td>

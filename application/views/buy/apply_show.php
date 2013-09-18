@@ -967,7 +967,7 @@
                                     <td><?php echo $row->paymoney ?></td>
                                     <td><?php echo $row->lastmoney ?></td>
                                     <td><?php echo $row->storehousecode ?></td>
-                                    <td><?php $status=array('0'=>'待审核','2'=>'已审核','3'=>'已配送','6'=>'期货部分配送');echo $status[$row->status] ?></td>
+                                    <td><?php $status=array('0'=>'待审核','1'=>'退单','2'=>'已审核','3'=>'已配送','6'=>'期货部分配送');echo $status[$row->status] ?></td>
                                 </tr>
                             <?php endforeach;?>
                             </tbody>
