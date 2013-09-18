@@ -956,18 +956,18 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <?php foreach($sells as $row):?>
+                            <?php foreach($sells as $tmp_sell):?>
                                 <tr>
-                                    <td><?php echo $row->sellnumber ?></td>
-                                    <td><?php echo $row->selldate ?></td>
-                                    <td><?php echo $row->clientname ?></td>
-                                    <td><?php echo $row->checkby ?></td>
-                                    <td><?php echo $row->totalmoney ?></td>
-                                    <td><?php echo $row->discount ?></td>
-                                    <td><?php echo $row->paymoney ?></td>
-                                    <td><?php echo $row->lastmoney ?></td>
-                                    <td><?php echo $row->storehousecode ?></td>
-                                    <td><?php $status=array('0'=>'待审核','1'=>'退单','2'=>'已审核','3'=>'已配送','6'=>'期货部分配送');echo $status[$row->status] ?></td>
+                                    <td><?php echo $tmp_sell->sellnumber ?></td>
+                                    <td><?php echo $tmp_sell->selldate ?></td>
+                                    <td><?php echo $tmp_sell->clientname ?></td>
+                                    <td><?php echo $tmp_sell->checkby ?></td>
+                                    <td><?php echo $tmp_sell->totalmoney ?></td>
+                                    <td><?php echo $tmp_sell->discount ?></td>
+                                    <td><?php echo $tmp_sell->paymoney ?></td>
+                                    <td><?php echo $tmp_sell->lastmoney ?></td>
+                                    <td><?php echo $tmp_sell->storehousecode ?></td>
+                                    <td><?php $status=array('0'=>'待审核','1'=>'退单','2'=>'已审核','3'=>'已配送','6'=>'期货部分配送');echo $status[$tmp_sell->status] ?></td>
                                 </tr>
                             <?php endforeach;?>
                             </tbody>
