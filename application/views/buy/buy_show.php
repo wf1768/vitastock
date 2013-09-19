@@ -8,7 +8,7 @@
 
 <script>
 
-    function remove() {
+    function delete_product() {
         var str="";
         $("input[name='checkbox']").each(function(){
             if($(this).attr("checked") == 'checked'){
@@ -396,7 +396,7 @@
                             <label class="pull-left">
                                 <ul class="nav nav-pills">
                                     <li class="active"><a href="<?php echo site_url('buy_product/add?id='.$row[0]->id) ?>" id="addbuy-product">添加采购商品</a></li>
-                                    <li class="active"><a href="javascript:;" id="delete_product" onclick="remove()">删除商品</a></li>
+                                    <li class="active"><a href="javascript:;" id="delete_product" onclick="delete_product()">删除商品</a></li>
                                     <li class="active"><a href="<?php echo site_url('buy_product/import?id='.$row[0]->id) ?>">导入</a></li>
                                     <li class="active"><a href="javascript:;" onclick="create_storehouse_in('<?php echo $row[0]->id ?>')">生成入库单</a></li>
                                 </ul>
