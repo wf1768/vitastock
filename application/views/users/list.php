@@ -21,7 +21,7 @@ $(document).ready(function(){
 	});
 
 });
-    function remove() {
+    function remove_user() {
         var str="";
         $("input[name='checkbox']").each(function(){
             if($(this).attr("checked") == 'checked'){
@@ -83,7 +83,7 @@ $(document).ready(function(){
                 <a href="<?php echo site_url("users/sDataAdd?orgid=".$norgid)?>" id="add" class="btn btn-small">
                     <i class="icon-plus"> 添加</i>
                 </a>
-                <a href="javascript:;" class="btn btn-small" onclick="remove()">
+                <a href="javascript:;" class="btn btn-small" onclick="remove_user()">
                     <i class="icon-minus"> 删除</i>
                 </a>
 
