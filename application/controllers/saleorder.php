@@ -409,10 +409,10 @@ class saleorder extends Stock__Controller {
 		if(isset($_GET['type'])){
 			if($_GET['type']==0){
 //				$otherwehre = "status !=1 and status != 3";
-                $otherwehre = "financestatus =1 and status !=0";
+                $otherwehre = "(financestatus =1 and status !=0) or status = 1";
 			}elseif($_GET['type']==1){
 //				$otherwehre = array ("status" => '2');
-                $otherwehre = "financestatus =0 and status != 0";
+                $otherwehre = "financestatus =0 and status != 0 and status != 1";
 			}elseif($_GET['type']==2){
 				$otherwehre = array ("status" => '0');
 			}
