@@ -71,7 +71,7 @@
                                 </tr>
                                 <tr>
                                     <td>厂家:</td>
-                                    <td><?php echo $row->factoryname ?></td>
+                                    <td><?php echo $row->factoryname ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱号:<?php echo $row->boxno ?></td>
                                 </tr>
                                 <tr>
                                     <td>件数:</td>

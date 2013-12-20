@@ -191,6 +191,8 @@
 
         //获得件数
         var itemnumber = '<?php echo $row[0]->itemnumber ?>';
+        //获得箱号
+        var boxno = '<?php echo $row[0]->boxno ?>';
         var barcode = '<?php echo $row[0]->barcode ?>';
 
         var title = '<?php echo $row[0]->title ?>';
@@ -222,7 +224,7 @@
             barcode_str += '</tr>';
             barcode_str += '<tr>';
             barcode_str += '<td>厂家:</td>';
-            barcode_str += '<td>'+factoryname +'</td>';
+            barcode_str += '<td>'+factoryname +'  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱号: '+ boxno +'</td>';
             barcode_str += '</tr>';
             barcode_str += '<tr>';
             barcode_str += '<td>件数:</td>';
@@ -414,7 +416,7 @@
                             </tr>
                             <tr>
                                 <td>厂家:</td>
-                                <td><?php echo $row[0]->factoryname ?></td>
+                                <td><?php echo $row[0]->factoryname ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱号:<?php echo $row[0]->boxno ?></td>
                             </tr>
                             <tr>
                                 <td>件数:</td>

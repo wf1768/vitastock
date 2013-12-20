@@ -129,6 +129,7 @@
         var memo = $('#memo_'+rowid).val();
         var itemnumber = $('#itemnumber_' + rowid).val();
 
+
         $('#barcode_print').html('');
         var barcode_str = '';
         if (barcode != '') {
@@ -184,7 +185,7 @@
     }
 
     function barcode_print() {
-        openloading('正在生成打印的条形码，请稍后...');
+
         var str = "";
         $("input[name='checkbox']").each(function () {
             if ($(this).attr("checked") == 'checked') {
@@ -198,19 +199,25 @@
         str = str.substring(0, str.length - 1);
 
         str = str.split(',');
+        alert(str);
 
         $('#barcode_print').html('');
         var barcode_str = '';
         for (var i=0;i<str.length;i++) {
             var rowid = str[i];
+
             var barcode = $('#barcode_'+rowid).val();
             var title = $('#title_'+rowid).html();
             var code = $('#code_'+rowid).val();
             var factoryname = $('#factoryname_'+rowid).val();
             var memo = $('#memo_'+rowid).val();
             var itemnumber = $('#itemnumber_' + rowid).val();
+            var boxno = $('#boxno_'+rowid).val();
 
             if (barcode != '') {
+                if (itemnumber == 0 || itemnumber == null) {
+                    itemnumber = 1;
+                }
                 for (var j=0;j<parseInt(itemnumber);j++) {
                     barcode_str += '<div class="my_show" style="page-break-after: always;">';
                     barcode_str += '<table>';
@@ -235,7 +242,7 @@
                     barcode_str += '</tr>';
                     barcode_str += '<tr>';
                     barcode_str += '<td>厂家:</td>';
-                    barcode_str += '<td>'+factoryname +'</td>';
+                    barcode_str += '<td>'+factoryname +'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱号: '+ boxno +'</td>';
                     barcode_str += '</tr>';
                     barcode_str += '<tr>';
                     barcode_str += '<td>件数:</td>';
@@ -248,11 +255,15 @@
                     barcode_str += '</table>';
                     barcode_str += '</div>';
                 }
+
             }
         }
+
         if (barcode_str != '') {
-            $('#barcode_print').html(barcode_str);
+            openloading('正在生成打印的条形码，请稍后...');
             closeloading();
+            $('#barcode_print').html(barcode_str);
+
             $("input[name='checkbox']").attr("checked", false);
             $(".my_show").jqprint({
                 importCSS:true,
@@ -461,7 +472,7 @@
                                                     <th>颜色</th>
 <!--                                                    <th>材质等级</th>-->
                                                     <th>数量</th>
-<!--                                                    <th>箱号</th>-->
+                                                    <th>箱号</th>
                                                     <th>件数</th>
                                                     <th>条形码</th>
                                                     <th>备注</th>
@@ -493,10 +504,12 @@
                                                             <td><?php echo $stock->color ?></td>
 <!--                                                            <td>--><?php //echo $stock->format ?><!--</td>-->
                                                             <td><?php echo $stock->number ?></td>
+                                                            <td><?php echo $stock->boxno ?></td>
                                                             <td><?php echo $stock->itemnumber ?></td>
                                                             <td><?php echo $stock->barcode;$num++ ?>
                                                                 <input type="hidden" id="barcode_<?php echo $stock->id ?>" name="barcode_<?php echo $stock->id ?>" value="<?php echo $stock->barcode ?>" >
                                                                 <input type="hidden" id="itemnumber_<?php echo $stock->id ?>" name="itemnumber_<?php echo $stock->id ?>" value="<?php echo $stock->itemnumber ?>" >
+                                                                <input type="hidden" id="boxno_<?php echo $stock->id ?>" name="boxno_<?php echo $stock->id ?>" value="<?php echo $stock->boxno ?>" >
                                                             </td>
                                                             <td><?php echo $stock->remark;  ?></td>
                                                             <td><?php echo ($stock->statuskey == 0)?'<font color="red">'.$stock->statusvalue.'</font>':$stock->statusvalue ?></td>
