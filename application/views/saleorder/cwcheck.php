@@ -44,6 +44,7 @@
                                         <option value="2" <?php if ($type == 2) echo 'selected' ?>>未审核</option>
                                         <option value="1" <?php if ($type == 1) echo 'selected' ?>>未结束</option>
                                         <option value="0" <?php if ($type == 0) echo 'selected' ?>>已结束</option>
+                                        <option value="3" <?php if ($type == 3) echo 'selected' ?>>已退单</option>
                                     </select>
                                     <button style="margin-left:20px" id="search" type="submit" class="btn btn-primary">&nbsp;&nbsp;搜&nbsp;&nbsp;索&nbsp;&nbsp;</button>
                                 </form>

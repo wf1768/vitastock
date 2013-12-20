@@ -22,7 +22,7 @@ $(document).ready(function(){
 	});
 
 });
-    function remove() {
+    function remove1() {
         var str="";
         $("input[name='checkbox']").each(function(){
             if($(this).attr("checked") == 'checked'){
@@ -51,7 +51,7 @@ $(document).ready(function(){
                         	openalert("数据错误，请重新尝试 ");
                           	return false;
                         }else{
-                        	openalert("删除商品出错，请重新尝试或与管理员联系。");
+                        	openalert("删除出错，请重新尝试或与管理员联系。");
                         	return false;
                         }
                     },
@@ -80,7 +80,7 @@ $(document).ready(function(){
         <div class="span9 doconfirm">
             <label class="pull-right">
              <?php if(notice::get_function_son(38)):?>
-                 <a href="javascript:;" class="btn btn-small" onclick="remove()">
+                 <a href="javascript:;" class="btn btn-small" onclick="remove1()">
                     <i class="icon-minus"> 删除</i>
                 </a>
              <?php endif;?>

@@ -91,6 +91,10 @@
     }
 
     $(function() {
+        $("#doback").click(function(){
+            history.back();
+            return false;
+        });
     })
 </script>
 
@@ -177,7 +181,8 @@
                                                     <a href="javascript:;" onclick="docheck('<?php echo $apply->id ?>')" class="btn btn-primary">通过审核</a>
                                                 <?php endif ?>
                                                 <a href="javascript:;" class="btn btn-primary" onclick="onPrint()" ><i class="icon-print"> 打印期货销售单</i></a>
-                                                <a href="<?php echo site_url('apply_check/pages?type='.$type) ?>" class="btn btn-primary">返回</a>
+<!--                                                <a href="--><?php //echo site_url('apply_check/pages?type='.$type) ?><!--" class="btn btn-primary">返回</a>-->
+                                                <a href="javascript:;" id='doback' class="btn btn-primary">返回</a>
                                             </ul>
                                         </label>
                                     </div>
