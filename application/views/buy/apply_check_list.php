@@ -119,10 +119,10 @@
                                     </td>
                                     <td>
                                         <?php if ($row->status == 1 || $row->financestatus == 0): ?>
-                                            <a href="<?php echo site_url("apply_check/check?id=" . $row->id.'&type='.$_GET['type']) ?>"
+                                            <a href="<?php echo site_url("apply_check/check?id=" . $row->id.'&type='.$_GET['type'].'&p='.$p) ?>"
                                                class="btn btn-small btn-primary">审核</a>
                                         <?php else: ?>
-                                            <a href="<?php echo site_url("apply_check/check?id=" . $row->id.'&type='.$_GET['type']) ?>"
+                                            <a href="<?php echo site_url("apply_check/check?id=" . $row->id.'&type='.$_GET['type'].'&p='.$p) ?>"
                                                class="btn btn-small btn-primary">详细</a>
                                             <!--                                            <button class="btn ">审核</button>-->
                                         <?php endif;?>

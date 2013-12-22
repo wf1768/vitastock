@@ -90,10 +90,10 @@
                                     <td><?php echo $row->storehousecode ?></td>
                                     <td>
                                         <?php if ($row->status == 0 || $row->financestatus == 0): ?>
-                                            <a href="<?php echo site_url("saleorder/shCwCheck?id=" . $row->id.'&type='.$_GET['type']) ?>"
+                                            <a href="<?php echo site_url("saleorder/shCwCheck?id=" . $row->id.'&type='.$_GET['type'].'&p='.$p) ?>"
                                                class="btn btn-primary">审核</a>
                                         <?php else: ?>
-                                            <a href="<?php echo site_url("saleorder/shCwCheck?id=" . $row->id.'&type='.$_GET['type']) ?>"
+                                            <a href="<?php echo site_url("saleorder/shCwCheck?id=" . $row->id.'&type='.$_GET['type'].'&p='.$p) ?>"
                                                class="btn btn-primary">详细</a>
 <!--                                            <button class="btn ">审核</button>-->
                                         <?php endif;?>

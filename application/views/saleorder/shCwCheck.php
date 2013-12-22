@@ -154,8 +154,8 @@
                                                 <a href="javascript:;" onclick="return docheck(this)" class="btn btn-primary">通过审核</a>
                                                 <?php endif ?>
                                                 <a href="javascript:;" onclick="onPrint()" class="btn btn-primary">打印销售单</a>
-<!--                                                <a href="--><?php //echo site_url('saleorder/cwcheck?type=').$type ?><!--" class="btn btn-primary">返回</a>-->
-                                                <a href="javascript:;" id='doback' class="btn btn-primary">返回</a>
+                                                <a href="<?php echo site_url('saleorder/cwcheck?type=').$type.'&p='.$_GET['p'] ?>" class="btn btn-primary">返回</a>
+<!--                                                <a href="javascript:;" id='doback' class="btn btn-primary">返回</a>-->
                                             </ul>
                                         </label>
                                     </div>

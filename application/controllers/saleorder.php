@@ -423,6 +423,13 @@ class saleorder extends Stock__Controller {
 			$otherwehre = array ("status" => '0');
 		}
         $this->_data['type'] = $_GET['type'];
+        if(isset($_GET['p'])){
+            $this->_data['p'] = $_GET['p'];
+        }
+        else {
+            $this->_data['p'] = 1;
+        }
+
 		$this->dataList("saleorder/cwCheck", $this->sell_model, $where = array ('storehouseid'), $like = array ('sellnumber','clientname'), $order, $this->_data, $otherwehre);
 	}
 	/*
