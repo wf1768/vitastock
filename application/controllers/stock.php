@@ -562,8 +562,10 @@ class stock extends Stock__Controller {
             return;
         }
         foreach ($stockid as $id) {
-            $result = $this->stock_lib->remove_stock($id);
+            $this->dataDelete($this->stock_model,array('id'=>$id),'id',false);
+//            $result = $this->stock_lib->remove_stock($id);
         }
+        $result = true;
         $this->output->append_output($result);
     }
 

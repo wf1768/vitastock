@@ -9,6 +9,14 @@
             debug:false
         });
     }
+
+    $(function() {
+        $("#doback").click(function(){
+            history.back();
+            return false;
+        });
+    })
+
 </script>
 <!-- Modal -->
 <div id="content">
@@ -36,7 +44,9 @@
                                         <label class="pull-right">
                                             <ul class="nav nav-pills">
                                                 <a href="javascript:;" onclick="onPrint()" class="btn btn-primary">打印销售单</a>
-                                                <a href="<?php echo site_url('saleorder/orderList') ?>" class="btn btn-primary">返回销售单</a>
+<!--                                                <a href="--><?php //echo site_url('saleorder/orderList') ?><!--" class="btn btn-primary">返回销售单</a>-->
+                                                <a href="javascript:;" id='doback' class="btn btn-primary">返回销售单</a>
+
                                             </ul>
                                         </label>
                                     </div>

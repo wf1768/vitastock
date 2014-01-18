@@ -63,9 +63,10 @@ $(document).ready(function(){
                     <div class="part_search">
                         <div class="navbar">
                             <div class="navbar-inner">
-                                <form style="margin-bottom:5px" id="searchfrom" action="<?php echo site_url('saleorder/orderList?sup=1')?>" method="POST"  class="navbar-form">
+                                <form style="margin-bottom:5px" id="searchfrom" action="<?php echo site_url('saleorder/orderList?sup=1')?>" method="GET"  class="navbar-form">
                                     <input type="hidden" value="1" name="search_type">
                                     <input type="hidden" value="1" name="houseid" id="houseid">
+                                    <input type="hidden" value="1" name="sup" id="sup">
                                     <font class="myfont">&nbsp;&nbsp;销售单号：</font>
                                     <input type="text" placeholder="请输销售单号" value="<?php echo isset($_REQUEST['sellnumber'])?$_REQUEST['sellnumber']:'';?>" id="tiaoma" name="sellnumber">
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font class="myfont">销售店：</font>

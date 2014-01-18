@@ -38,7 +38,7 @@ class saleorder extends Stock__Controller {
         //获取库房
         $houses = $this->storehouse_model->getAllByWhere();
         $this->_data['houses'] = $houses;
-        $storehouseid = $this->input->post('storehouseid') ? $this->input->post('storehouseid') : '';
+        $storehouseid = $this->input->get('storehouseid') ? $this->input->get('storehouseid') : '';
         $this->_data['storehouseid'] = $storehouseid;
 		$like = array ('sellnumber','storehouseid','clientname','checkby');
 		$this->dataList("saleorder/orderList", $this->sell_model, $where = array (), $like, $order, $this->_data, $otherwehre);
